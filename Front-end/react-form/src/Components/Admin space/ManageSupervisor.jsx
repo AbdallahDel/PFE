@@ -295,6 +295,8 @@ const ManageUsers = (formData) => {
                           >
                             <option value="admin">admin</option>
                             <option value="user">User</option>
+                            <option value="supervisor">supervisor</option>
+
                           </select>
                         ) : (
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
