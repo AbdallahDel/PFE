@@ -10,7 +10,7 @@ const handleLoggedOut =async () =>{
     if (!confirmed) return;
     
 
-  const response = await  fetch ('http://localhost/Back-end/logOut.php',{
+  const response = await  fetch ('http://localhost/PFE/Back-end/logOut.php',{
     method :'POST',
     credentials: 'include',
     

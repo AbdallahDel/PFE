@@ -8,7 +8,7 @@ export default function Profile() {
     useEffect(() => {
     const GetUserInfo = async ()=>{
        
-        const response = await fetch('http://localhost/Back-end/GetUserInfo.php', {
+        const response = await fetch('http://localhost/PFE/Back-end/GetUserInfo.php', {
             credentials: 'include',
             headers: {
               'Accept': 'application/json'

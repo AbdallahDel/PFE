@@ -1,4 +1,6 @@
 <?php
+include 'connexion.php'; // or require 'connection.php';
+
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
@@ -11,20 +13,17 @@ $userName = $_POST["userName"]??'';
 $Password = $_POST["Password"]??'';
 $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
 
+
 //validate input
 if (empty($userName ||empty($Password) )){
     echo json_encode(['message' => 'all field requered']);
     exit ;
 }
 
-//connect to the data base 
-$conn= new mysqli('localhost','root','','testform');
-if ($conn->connect_error){
-    die ('connection failed:'.$conn->connect_error);
-};
+
 
 // cherchee the username 
-$sql = "SELECT * FROM USER WHERE userName = ?";
+$sql = "SELECT * FROM user WHERE userName = ?";
 $stmt = $conn ->prepare ($sql);
 $stmt ->bind_param("s",$userName);
 $stmt ->execute();

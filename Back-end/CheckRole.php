@@ -1,4 +1,6 @@
 <?php
+include 'connexion.php'; // or require 'connection.php';
+
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
@@ -6,14 +8,9 @@ header("Content-Type: application/json");
 session_start();  // Move this to the top
 
 
-//connect to the data base 
-$conn= new mysqli('localhost','root','','testform');
-if ($conn->connect_error){
-    die ('connection failed:'.$conn->connect_error);
-};
 
 // cherchee the username 
-$sql = "SELECT * FROM USER WHERE userID = ?";
+$sql = "SELECT * FROM user WHERE userID = ?";
 $stmt = $conn ->prepare ($sql);
 $stmt ->bind_param("s",$_SESSION['USER_ID']);
 $stmt ->execute();

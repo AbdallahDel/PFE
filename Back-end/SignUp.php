@@ -1,4 +1,6 @@
 <?php
+include 'connexion.php'; // or require 'connection.php';
+
 
 header("Access-Control-Allow-Origin: *");
 header('Content-Type: application/json');
@@ -25,13 +27,9 @@ if (empty($userName)|| empty ($Password)|| empty ($Email)||empty ($PhoneNumber))
     exit;
 }
 try {
-//connect to databse
-$conn = new mysqli('localhost','root','','testform');
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
+
 //prepare and execute the statement
-$stmt = $conn->prepare ("INSERT INTO USER (userName,Password,Email,PhoneNumber,Role)VALUES (?,?,?,?,?)");
+$stmt = $conn->prepare ("INSERT INTO user (userName,Password,Email,PhoneNumber,Role)VALUES (?,?,?,?,?)");
 $stmt ->bind_param("sssss",$userName,$hashedPassword,$Email,$PhoneNumber,$Role);
 if ($stmt->execute()){
     echo json_encode(['message'=>'user saved with success']);

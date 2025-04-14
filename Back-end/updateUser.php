@@ -1,4 +1,6 @@
 <?php
+include 'connexion.php'; // or require 'connection.php';
+
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: PUT, POST, OPTIONS");
@@ -27,15 +29,13 @@ if (!isset($data['userID']) || !is_numeric($data['userID'])) {
     exit;
 }
 
-// Connect to the database
-$conn = new mysqli('localhost', 'root', '', 'testform');
-if ($conn->connect_error) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-    exit;
-}
+
+
+
+
 //update the user info 
 
-$sql = "UPDATE USER SET
+$sql = "UPDATE user SET
 
 userName = ?,
 Email =?,

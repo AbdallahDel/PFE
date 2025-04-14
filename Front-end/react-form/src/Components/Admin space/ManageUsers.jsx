@@ -8,7 +8,8 @@ import AddUser from './AddUser';
 
 const ManageUsers = (formData) => {
   // Sample user data - replace with your actual data source
-  
+  const API_BASE_URL = 'http://localhost/PFE/Back-end';
+
   const [users, setUsers] = useState([]); 
   const [Editing, setEditing] = useState(false);
   const [EditedData, setEditedData] = useState({});
@@ -19,7 +20,7 @@ const ManageUsers = (formData) => {
   
   useEffect(() => {
     const getUsers = async () => {
-      const response = await fetch('http://localhost/Back-end/manageUsers.php', {
+      const response = await fetch(`${API_BASE_URL}/manageUsers.php`, {
         credentials: 'include',
         headers: {
           'Accept': 'application/json'
@@ -34,8 +35,9 @@ const ManageUsers = (formData) => {
         console.error(`HTTP error! Status: ${response.status}`);
       }
     }
-
     getUsers();
+
+    
   }, []);
 
   // Search functionality
@@ -53,7 +55,7 @@ const ManageUsers = (formData) => {
     const confirmed = window.confirm("Are you sure you want to delete this user?");
     if (!confirmed) return;
     try {
-      const response = await fetch('http://localhost/Back-end/deleteUser.php', {
+      const response = await fetch(`${API_BASE_URL}/deleteUser.php`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -107,7 +109,7 @@ const ManageUsers = (formData) => {
   // Save edited user
   const saveUser = async() => {
     try {
-      const response = await fetch('http://localhost/Back-end/updateUser.php', {
+      const response = await fetch(`${API_BASE_URL}/updateUser.php`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -153,7 +155,7 @@ const ManageUsers = (formData) => {
     
     try {
     // Add further logic for form submission, e.g., API call
-    const response = await  fetch ('http://localhost/Back-end/addUser.php',{
+    const response = await  fetch (`${API_BASE_URL}/addUser.php`,{
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -294,16 +296,15 @@ const ManageUsers = (formData) => {
                             onChange={(e) => handleInputChange(e, 'Role')}
                           >
                             <option value="admin">admin</option>
-                            <option value="supervisor">Supervisor</option>
                             <option value="user">User</option>
-
+                            <option value="supervisor">supervisor</option>
 
                           </select>
                         ) : (
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             user.Role === 'admin' ? 'bg-purple-100 text-green-800' : 
                             user.Role === 'user' ? 'bg-blue-100 text-blue-800' : 
-                            'bg-blue-100 text-#5C4033-800'
+                            'bg-green-100 text-green-800'
                           }`}>
                             {user.Role}
                           </span>

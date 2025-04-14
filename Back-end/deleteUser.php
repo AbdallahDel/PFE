@@ -1,4 +1,6 @@
 <?php
+include 'connexion.php'; // or require 'connection.php';
+
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: DELETE, OPTIONS");
@@ -19,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
 
 session_start();
 
+
+
 $data = json_decode(file_get_contents("php://input"), true);
 $userId = isset($data['id']) ? $data['id'] : null;
 
@@ -27,15 +31,10 @@ if (!isset($userId) || !is_numeric($userId)) {
     exit;
 }
 
-// Connect to the database
-$conn = new mysqli('localhost', 'root', '', 'testform');
-if ($conn->connect_error) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
-    exit;
-}
+
 
 // Correct SQL syntax for DELETE
-$sql = "DELETE FROM USER WHERE userID = ?";
+$sql = "DELETE FROM user WHERE userID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userId); // Use "i" for integer
 
