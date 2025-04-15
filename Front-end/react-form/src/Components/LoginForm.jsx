@@ -7,6 +7,7 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const API_BASE_URL = 'http://localhost/PFE/Back-end';
 
   const navigate = useNavigate();
 
@@ -25,7 +26,7 @@ function LoginForm() {
     formData.append('Password', password); // Match PHP $_POST name
 
     try {
-      const response = await fetch('http://localhost/Back-end/backEnd.php', {
+      const response = await fetch(`${API_BASE_URL}/backEnd.php`, {
         method: 'POST',
         credentials: 'include'  ,// Add this if not already present 
 

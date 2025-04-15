@@ -1,9 +1,13 @@
 <?php
+include 'connexion.php'; // or require 'connection.php';
+
 
 $jsonData = json_decode(file_get_contents('php://input'), true);
 $userName = $jsonData["userName"] ?? '';
 $Password = $jsonData["Password"] ?? '';
 $Role = $jsonData["Role"] ?? '';
+
+
 
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Credentials: true");
@@ -32,13 +36,9 @@ if (empty($userName)|| empty ($Password)){
     exit;
 }
 try {
-//connect to databse
-$conn = new mysqli('localhost','root','','testform');
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
+
 //prepare and execute the statement
-$stmt = $conn->prepare ("INSERT INTO USER (userName,Password,Role)VALUES (?,?,?)");
+$stmt = $conn->prepare ("INSERT INTO user (userName,Password,Role)VALUES (?,?,?)");
 $stmt ->bind_param("sss",$userName,$hashedPassword,$Role);
 if ($stmt->execute()){
     $newUserId = $conn->insert_id;  // Get the ID of the newly inserted row
