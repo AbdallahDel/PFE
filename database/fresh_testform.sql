@@ -7,14 +7,8 @@ DROP DATABASE IF EXISTS `testform`;
 CREATE DATABASE `testform`;
 USE `testform`;
 
--- Create the roles table
-CREATE TABLE IF NOT EXISTS `roles` (
-  `roleID` INT AUTO_INCREMENT PRIMARY KEY,
-  `roleName` VARCHAR(50) NOT NULL UNIQUE
-);
-
--- Insert predefined roles into the roles table
-INSERT INTO `roles` (`roleName`) VALUES ('admin'), ('supervisor'), ('student');
+-- Drop the roles table
+DROP TABLE IF EXISTS `roles`;
 
 -- Create the user table
 CREATE TABLE IF NOT EXISTS `user` (
@@ -23,11 +17,10 @@ CREATE TABLE IF NOT EXISTS `user` (
   `Password` VARCHAR(255) NOT NULL,
   `PhoneNumber` INT NOT NULL,
   `Email` VARCHAR(100) NOT NULL,
-  `roleID` INT NOT NULL,
+  `role` ENUM('admin', 'student', 'supervisor') NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY `userName` (`userName`),
-  CONSTRAINT `fk_role` FOREIGN KEY (`roleID`) REFERENCES `roles`(`roleID`)
+  UNIQUE KEY `userName` (`userName`)
 );
 
 -- Create the category table
@@ -167,5 +160,5 @@ END //
 DELIMITER ;
 
 -- Insert a default admin user
-INSERT INTO `user` (`userName`, `Password`, `PhoneNumber`, `Email`, `roleID`) 
-VALUES ('admin', '$2y$10$qg5N0konySSDfrCwS8/ruu38aO3by2hZ.goOerCkBJkwPTogDzWLu', 549709976, 'b6hocine@gmail.com', 1);
+INSERT INTO `user` (`userName`, `Password`, `PhoneNumber`, `Email`, `role`) 
+VALUES ('admin', '$2y$10$qg5N0konySSDfrCwS8/ruu38aO3by2hZ.goOerCkBJkwPTogDzWLu', 549709976, 'b6hocine@gmail.com', 'admin');
