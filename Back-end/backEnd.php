@@ -15,14 +15,14 @@ $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
 
 
 //validate input
-if (empty($userName ||empty($Password) )){
-    echo json_encode(['message' => 'all field requered']);
+if (empty($userName) || empty($Password)){
+    echo json_encode(['message' => 'All fields are required.']);
     exit ;
 }
 
 
 
-// cherchee the username 
+// search the username 
 $sql = "SELECT * FROM user WHERE userName = ?";
 $stmt = $conn ->prepare ($sql);
 $stmt ->bind_param("s",$userName);

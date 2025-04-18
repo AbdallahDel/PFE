@@ -1,9 +1,9 @@
 <?php
 // Connection details exactly as shown in your control panel
-$servername = "sql7.freesqldatabase.com";
-$username = "sql7773173";
-$password = "TPUEEpdlQ7";
-$dbname = "sql7773173";
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "testform";
 
 // Try to establish connection with timeout
 $conn = mysqli_init();
