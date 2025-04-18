@@ -78,8 +78,15 @@ CREATE TABLE IF NOT EXISTS `project` (
   `goals` TEXT,
   `challenges` TEXT,
   `keywords` TEXT,
+  `teamID` INT DEFAULT NULL,
+  `state` TINYINT NOT NULL DEFAULT 0 COMMENT '0: initialized, 1: submitted, 2: approved by admin, -1: rejected',
+  `rejection_reason` TEXT DEFAULT NULL COMMENT 'Reason for rejection, if state is -1',
+  `education_level` ENUM('licence', 'master') NOT NULL COMMENT 'Education level of the project',
+  `internship_period` INT NOT NULL COMMENT 'Internship period in days',
+  `start_date` DATE NOT NULL COMMENT 'Start date of the project',
   CONSTRAINT `fk_category` FOREIGN KEY (`categoryID`) REFERENCES `category`(`categoryID`),
-  CONSTRAINT `fk_hostOrganization` FOREIGN KEY (`hostOrganizationID`) REFERENCES `host_organization`(`hostOrganizationID`)
+  CONSTRAINT `fk_hostOrganization` FOREIGN KEY (`hostOrganizationID`) REFERENCES `host_organization`(`hostOrganizationID`),
+  CONSTRAINT `fk_team` FOREIGN KEY (`teamID`) REFERENCES `team`(`teamID`)
 );
 
 -- Create the team table
@@ -93,7 +100,8 @@ CREATE TABLE IF NOT EXISTS `team` (
   CONSTRAINT `fk_member1` FOREIGN KEY (`member1`) REFERENCES `user`(`userID`),
   CONSTRAINT `fk_member2` FOREIGN KEY (`member2`) REFERENCES `user`(`userID`),
   CONSTRAINT `fk_supervisor` FOREIGN KEY (`supervisorID`) REFERENCES `user`(`userID`),
-  CONSTRAINT `fk_project` FOREIGN KEY (`projectID`) REFERENCES `project`(`projectID`)
+  CONSTRAINT `fk_project` FOREIGN KEY (`projectID`) REFERENCES `project`(`projectID`),
+  CONSTRAINT `unique_project` UNIQUE (`projectID`)
 );
 
 -- Create the Q/A table
@@ -104,6 +112,59 @@ CREATE TABLE IF NOT EXISTS `qa` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- Create the conversations table
+CREATE TABLE IF NOT EXISTS `conversations` (
+  `conversationID` INT AUTO_INCREMENT PRIMARY KEY,
+  `participant1ID` INT NOT NULL,
+  `participant2ID` INT NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_participant1` FOREIGN KEY (`participant1ID`) REFERENCES `user`(`userID`),
+  CONSTRAINT `fk_participant2` FOREIGN KEY (`participant2ID`) REFERENCES `user`(`userID`)
+);
+
+-- Create the messages table
+CREATE TABLE IF NOT EXISTS `messages` (
+  `messageID` INT AUTO_INCREMENT PRIMARY KEY,
+  `conversationID` INT NOT NULL,
+  `senderID` INT NOT NULL,
+  `content` TEXT NOT NULL,
+  `sent_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_conversation` FOREIGN KEY (`conversationID`) REFERENCES `conversations`(`conversationID`),
+  CONSTRAINT `fk_sender` FOREIGN KEY (`senderID`) REFERENCES `user`(`userID`)
+);
+
+-- Create the supervisor applications table
+CREATE TABLE IF NOT EXISTS `supervisor_applications` (
+  `applicationID` INT AUTO_INCREMENT PRIMARY KEY,
+  `teamID` INT NOT NULL,
+  `supervisorID` INT NOT NULL,
+  `status` ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_application_team` FOREIGN KEY (`teamID`) REFERENCES `team`(`teamID`),
+  CONSTRAINT `fk_application_supervisor` FOREIGN KEY (`supervisorID`) REFERENCES `user`(`userID`)
+);
+
+-- Add a trigger to enforce project assignment rules
+DELIMITER //
+CREATE TRIGGER `before_project_assignment`
+BEFORE UPDATE ON `team`
+FOR EACH ROW
+BEGIN
+  IF NEW.projectID IS NOT NULL THEN
+    -- Use a local variable to store the project type
+    SET @projectType = (SELECT `type` FROM `project` WHERE `projectID` = NEW.projectID);
+    IF @projectType = 'external' THEN
+      -- Use a local variable to check if the project is already assigned
+      SET @assignedTeam = (SELECT `teamID` FROM `project` WHERE `projectID` = NEW.projectID);
+      IF @assignedTeam IS NOT NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'External projects can only be linked to one team.';
+      END IF;
+    END IF;
+  END IF;
+END //
+DELIMITER ;
 
 -- Insert a default admin user
 INSERT INTO `user` (`userName`, `Password`, `PhoneNumber`, `Email`, `roleID`) 
