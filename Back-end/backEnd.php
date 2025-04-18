@@ -34,19 +34,19 @@ if ($result->num_rows >0){
     $user = $result->fetch_assoc();
     if (password_verify($Password , $user['Password'])){
         $_SESSION['USER_ID']=$user['userID'];
-        if ($user['role']==='admin'){
+        if ($user['Role']==='admin'){
             echo json_encode (['role'=>'admin',
                         'message'=>'admin access',
                         'success'=>true,
             ]);
         }
-        if ($user['role']==='student') {
-            echo json_encode(['role'=>'student',
-                        'message'=>'student access',
+        if ($user['Role']==='user') {
+            echo json_encode(['role'=>'user',
+                        'message'=>'user access',
                         'success'=>true,
         ]);
         }
-        if ($user['role']==='supervisor') {
+        if ($user['Role']==='supervisor') {
             echo json_encode(['role'=>'supervisor',
                         'message'=>'supervisor access',
                         'success'=>true,
