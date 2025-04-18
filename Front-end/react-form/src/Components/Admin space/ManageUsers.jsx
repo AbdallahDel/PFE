@@ -5,6 +5,9 @@ import Dashboard from './Dashboard';
 import SideBar from './SideBar';
 import Header from './Header';
 import AddUser from './AddUser';
+import ImportButton from './ImportButton';
+
+
 
 const ManageUsers = (formData) => {
   // Sample user data - replace with your actual data source
@@ -15,6 +18,7 @@ const ManageUsers = (formData) => {
   const [EditedData, setEditedData] = useState({});
   const [EditingID, setEditingID] = useState(null);
   const [ShowAddUser,SetShowAddUser]= useState(false);
+  const [importedUser,setImportedUser]=useState([]);
 
 
   
@@ -192,8 +196,51 @@ const ManageUsers = (formData) => {
 
 
 };
+////////////////////
+const handleImportedUsers = async (importedData) => {
+  console.log("Data received in parent:", importedData);
+  
+  // Add default role to imported users if needed
+  const importedWithRole = importedData.map(user => ({
+    ...user,
+    Role: 'user' // or 'supervisor' or any default value
+  }));
+  
+  try {
+    // API call to save the imported users
+    const response = await fetch(`${API_BASE_URL}/ImportedData.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(importedWithRole)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    console.log(result);
+    
+    if (result.message === 'imported user/s saved with success') {
+      // Update the local state with the new users
+      setUsers(prevUsers => [...prevUsers, ...importedWithRole]);
+      //console.log('the new table:',[...users, ...importedWithRole].map(user=>user.userName));
+      alert("Import successful!");
+    } else {
+      console.log('Error: ' + result.message);
+      alert("Impor failed");
+
+    }
+  } catch (error) {
+    console.log('Request error: ' + error.message);
+  }
+};
 
   return (
+    
     <div className="flex flex-col h-screen">
       <Header />
       <div className="flex flex-1 overflow-hidden">
@@ -204,6 +251,10 @@ const ManageUsers = (formData) => {
               <Users className="mr-2" size={24} />
               Manage Users
             </h1>
+             
+            
+            <ImportButton onImport={handleImportedUsers} />
+
             <button onClick={()=>SetShowAddUser(true) } className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
               <UserPlus size={16} className="mr-2" />
               Add New User

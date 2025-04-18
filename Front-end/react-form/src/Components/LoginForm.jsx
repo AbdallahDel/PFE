@@ -85,7 +85,7 @@ function LoginForm() {
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Username
+                  matricule
                 </label>
                 <input
                   type="text"
