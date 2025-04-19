@@ -46,14 +46,18 @@ const ManageUsers = (formData) => {
 
   // Search functionality
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [roleFilter, setRoleFilter] = useState('all'); // Add role filter state
 
-  const filteredUsers = users.filter(user => 
-    (user.userName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.Email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.Role?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.PhoneNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase()) 
-  );
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = (
+      (user.userName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (user.Email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (user.Role?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (user.PhoneNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+    );
+    
+    return matchesSearch && (roleFilter === 'all' || user.Role === roleFilter);
+  });
 
   const handleDelete = async(userID) => {
     const confirmed = window.confirm("Are you sure you want to delete this user?");
@@ -251,30 +255,42 @@ const handleImportedUsers = async (importedData) => {
               <Users className="mr-2" size={24} />
               Manage Users
             </h1>
-             
             
-            <ImportButton onImport={handleImportedUsers} />
-
-            <button onClick={()=>SetShowAddUser(true) } className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
-              <UserPlus size={16} className="mr-2" />
-              Add New User
-            </button>
-            {ShowAddUser && <AddUser onAddUser={handleAdding} onClose={()=>SetShowAddUser(false)} />}
+            <div className="flex items-center space-x-4">
+              <ImportButton onImport={handleImportedUsers} />
+              <button onClick={() => SetShowAddUser(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
+                <UserPlus size={16} className="mr-2" />
+                Add New User
+              </button>
+            </div>
+            {ShowAddUser && <AddUser onAddUser={handleAdding} onClose={() => SetShowAddUser(false)} />}
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
-            {/* Search Bar */}
-            <div className="mb-6 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={18} className="text-gray-400" />
+            {/* Search and Filter Bar */}
+            <div className="mb-6 flex items-center gap-4">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search size={18} className="text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search users by name, email or role..."
+                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-              <input
-                type="text"
-                placeholder="Search users by name, email or role..."
-                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[150px]"
+              >
+                <option value="all">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+                <option value="supervisor">Supervisor</option>
+              </select>
             </div>
 
             {/* Users Table */}
