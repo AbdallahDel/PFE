@@ -29,23 +29,13 @@ export default function SideBar() {
             </div>
           </Link>
           
-          <Link to='/security'>
+          <Link to='/projects'>
             <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
-              currentPath === '/security' 
+              currentPath === '/projects' 
                 ? 'text-white bg-indigo-500' 
                 : 'text-slate-600 hover:bg-indigo-50'
             }`}>
-              Security
-            </div>
-          </Link>
-          
-          <Link to='/logs'>
-            <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
-              currentPath === '/logs' 
-                ? 'text-white bg-indigo-500' 
-                : 'text-slate-600 hover:bg-indigo-50'
-            }`}>
-              Logs
+              Projects
             </div>
           </Link>
         </div>

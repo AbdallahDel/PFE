@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Apr 19, 2025 at 05:49 PM
+-- Generation Time: Apr 19, 2025 at 07:14 PM
 -- Server version: 11.5.2-MariaDB
 -- PHP Version: 8.3.14
 
@@ -60,7 +60,14 @@ CREATE TABLE IF NOT EXISTS `student` (
   UNIQUE KEY `matricule` (`matricule`),
   KEY `fk_student_user` (`userID`),
   KEY `fk_student_team` (`teamID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `student`
+--
+
+INSERT INTO `student` (`studentID`, `userID`, `last_name`, `first_name`, `email`, `speciality`, `education_level`, `matricule`, `phone_number`, `teamID`) VALUES
+(1, 6, 'idk', 'hocine', 'hocine@gmail.com', 'SI', 'master', '111111', '0657713233', NULL);
 
 -- --------------------------------------------------------
 
@@ -78,7 +85,14 @@ CREATE TABLE IF NOT EXISTS `supervisor` (
   `userID` int(11) NOT NULL,
   PRIMARY KEY (`supervisorID`),
   KEY `fk_supervisor_user` (`userID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `supervisor`
+--
+
+INSERT INTO `supervisor` (`supervisorID`, `first_name`, `last_name`, `email`, `phone_number`, `userID`) VALUES
+(1, 'barr', 'mohammed', 'barr_mohammed@gmail.com', '222222222', 5);
 
 -- --------------------------------------------------------
 
@@ -111,7 +125,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `Role` enum('admin','user','supervisor') NOT NULL,
   PRIMARY KEY (`userID`),
   UNIQUE KEY `userName` (`userName`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `user`
@@ -121,7 +135,9 @@ INSERT INTO `user` (`userID`, `userName`, `Password`, `Role`) VALUES
 (1, 'admin', '$2y$10$qg5N0konySSDfrCwS8/ruu38aO3by2hZ.goOerCkBJkwPTogDzWLu', 'admin'),
 (2, 'superadmin', '$2y$10$AYbZfkixGkkMX.5t5Vl/3uQSRGR/paSEnnkHJ9Cj6QQWl09E883Ci', 'admin'),
 (3, 'hocine', '$2y$10$YFzm50.hJ1hr.E09zy4Ef.clC8cMCf0MCfyfOKUULOk2B42TFm5sK', 'user'),
-(4, 'supervisor', '$2y$10$bBDAMfpZkT85AQM8thmbOuRmZAtxA21iWXjgV/1JSFp/9kj3OZx4i', 'supervisor');
+(4, 'supervisor', '$2y$10$bBDAMfpZkT85AQM8thmbOuRmZAtxA21iWXjgV/1JSFp/9kj3OZx4i', 'supervisor'),
+(5, 'barr.mohammed', '$2y$10$oKPNBIABz46LAL62M7TIx.Z1PcCtIAXfAHIbKt0btlYk7YGte7W66', 'supervisor'),
+(6, '111111', '$2y$10$i2NbeURJRr4egugXnnkN6uYL4xqgau4ea3WvZK34.DKdRh05odtXC', 'user');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import LoginForm from './Components/LoginForm';
 import {BrowserRouter as Router ,Routes,Route} from 'react-router-dom'
@@ -10,7 +9,7 @@ import Dashboard from './Components/Admin space/Dashboard';
 import ManageUsers from './Components/Admin space/ManageUsers';
 import ManageSupervisor from './Components/Admin space/ManageSupervisor';
 import SupervisorHeader from './Components/Supervisor space/SupervisorHome';
-
+import Projects from './Components/Admin space/Projects';
 
 document.documentElement.classList.add('dark')
 function App() {
@@ -39,10 +38,8 @@ function App() {
                 }
       />
 
-
       <Route
       path="/profile"
-      
       element={
       <PrivateRoute adminOnly={false}>
       <Profile />
@@ -55,29 +52,31 @@ function App() {
         <Dashboard />
         </PrivateRoute>
         } 
-        />
-
+      />
 
       <Route path="/manageUsers"  element={
-        <PrivateRoute adminOnly ={true}>
+        <PrivateRoute adminOnly={true}>
         <ManageUsers />
         </PrivateRoute>
         } />
 
+      <Route path="/projects"  element={
+        <PrivateRoute adminOnly={true}>
+        <Projects />
+        </PrivateRoute>
+        } />
         
       <Route path="/manageSupervisor"  element={
-        <PrivateRoute adminOnly ={true}>
+        <PrivateRoute adminOnly={true}>
         <ManageSupervisor />
         </PrivateRoute>
         } />
       
       </Routes>
 
-  </Router>
-  </div>
-
-  );}
+    </Router>
+    </div>
+  );
+}
    
-       
-
 export default App;

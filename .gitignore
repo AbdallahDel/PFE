@@ -54,7 +54,6 @@ composer.phar
 .php_cs.cache
 
 # Package managers
-package-lock.json
 yarn.lock
 composer.lock
 
