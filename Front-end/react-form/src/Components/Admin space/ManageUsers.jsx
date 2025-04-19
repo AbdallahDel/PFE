@@ -1,447 +1,466 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Search, MoreVertical, Edit, Trash2, UserPlus, Filter, Save, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import Dashboard from './Dashboard';
+import { Users, Search, Edit, Trash2, UserPlus, Save, X } from 'lucide-react';
 import SideBar from './SideBar';
 import Header from './Header';
-import AddUser from './AddUser';
-import ImportButton from './ImportButton';
+import AddStudent from './AddStudent';
+import AddSupervisor from './AddSupervisor';
+import AddAdmin from './AddAdmin';
 
-
-
-const ManageUsers = (formData) => {
-  // Sample user data - replace with your actual data source
+const ManageUsers = () => {
   const API_BASE_URL = 'http://localhost/PFE/Back-end';
+  const [activeTab, setActiveTab] = useState('students');
+  const [students, setStudents] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+  const [admins, setAdmins] = useState([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editingItem, setEditingItem] = useState(null);
+  const [editingData, setEditingData] = useState({});
 
-  const [users, setUsers] = useState([]); 
-  const [Editing, setEditing] = useState(false);
-  const [EditedData, setEditedData] = useState({});
-  const [EditingID, setEditingID] = useState(null);
-  const [ShowAddUser,SetShowAddUser]= useState(false);
-  const [importedUser,setImportedUser]=useState([]);
-
-
-  
   useEffect(() => {
-    const getUsers = async () => {
-      const response = await fetch(`${API_BASE_URL}/manageUsers.php`, {
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Response data:', data); // Log the entire response
-        setUsers(Array.isArray(data) ? data : []);
-      }
-      else {
-        console.error(`HTTP error! Status: ${response.status}`);
-      }
-    }
-    getUsers();
-
-    
+    fetchData();
   }, []);
 
-  // Search functionality
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all'); // Add role filter state
+  const fetchData = async () => {
+    try {
+      const [studentsResponse, supervisorsResponse, adminsResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/getStudents.php`, { credentials: 'include' }),
+        fetch(`${API_BASE_URL}/getSupervisors.php`, { credentials: 'include' }),
+        fetch(`${API_BASE_URL}/getAdmins.php`, { credentials: 'include' })
+      ]);
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = (
-      (user.userName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (user.Email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (user.Role?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (user.PhoneNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-    );
-    
-    return matchesSearch && (roleFilter === 'all' || user.Role === roleFilter);
-  });
+      if (studentsResponse.ok) {
+        const studentsData = await studentsResponse.json();
+        setStudents(Array.isArray(studentsData) ? studentsData : []);
+      }
 
-  const handleDelete = async(userID) => {
+      if (supervisorsResponse.ok) {
+        const supervisorsData = await supervisorsResponse.json();
+        setSupervisors(Array.isArray(supervisorsData) ? supervisorsData : []);
+      }
+
+      if (adminsResponse.ok) {
+        const adminsData = await adminsResponse.json();
+        setAdmins(Array.isArray(adminsData) ? adminsData : []);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleDelete = async(id) => {
     const confirmed = window.confirm("Are you sure you want to delete this user?");
     if (!confirmed) return;
+    
+    const endpoint = activeTab === 'students' 
+      ? 'deleteStudent.php' 
+      : activeTab === 'supervisors'
+      ? 'deleteSupervisor.php'
+      : 'deleteUser.php';
+    
     try {
-      const response = await fetch(`${API_BASE_URL}/deleteUser.php`, {
+      const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
-          'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id: userID })
+        body: JSON.stringify({ id })
       });
-      
-      console.log('Response status:', response.status);
-      const responseText = await response.text();
-      console.log('Raw response:', responseText);
-      
-      try {
-        const data = JSON.parse(responseText);
-        console.log('Parsed data:', data);
-        
-        if (data.status === 'success') {
-          setUsers(prevUsers => prevUsers.filter(user => user.userID !== userID));
+
+      if (response.ok) {
+        if (activeTab === 'students') {
+          setStudents(prev => prev.filter(student => student.studentID !== id));
+        } else if (activeTab === 'supervisors') {
+          setSupervisors(prev => prev.filter(supervisor => supervisor.supervisorID !== id));
+        } else {
+          setAdmins(prev => prev.filter(admin => admin.userID !== id));
         }
-      } catch (parseError) {
-        console.error('Failed to parse JSON:', parseError);
       }
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error('Delete error:', error);
     }
   };
 
-  // Start editing a user
-  const startEditing = (user) => {
-    setEditingID(user.userID);
-    setEditing(true);
-    setEditedData({...user});
-  };
-
-  // Cancel editing
-  const cancelEditing = () => {
-    setEditingID(null);
-    setEditing(false);
-    setEditedData({});
-  };
-
-  // Handle input change
-  const handleInputChange = (e, field) => {
-    setEditedData({
-      ...EditedData,
-      [field]: e.target.value
-    });
-  };
-
-  // Save edited user
-  const saveUser = async() => {
+  const handleAddUser = async (userData, type) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/updateUser.php`, {
+      const endpoint = type === 'student' 
+        ? 'addStudent.php' 
+        : type === 'supervisor'
+        ? 'addSupervisor.php'
+        : 'addAdmin.php';
+
+      const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
-          'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(EditedData)
-        
+        body: JSON.stringify(userData)
       });
 
-      if (response.ok){
-        const data = await response.json();
-        console.log(data);
-      }else {
-        console.error(`HTTP error! Status: ${response.status}`);
+      if (response.ok) {
+        const result = await response.json();
+        if (result.status === 'success') {
+          fetchData();
+          setShowAddForm(false);
+        } else {
+          alert(result.message);
+        }
       }
-      
-
-
-      setUsers(prevUsers => 
-        prevUsers.map(user => 
-          user.userID === EditingID ? EditedData : user
-        )
-      );
-      
-      // Reset editing state
-      setEditing(false);
-      setEditingID(null);
-      setEditedData({});
-      
     } catch (error) {
-      console.error('Save error:', error);
+      console.error(`Error adding ${type}:`, error);
+      alert(`Failed to add ${type}`);
     }
   };
 
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setEditingData({...item});
+  };
 
-  //adding new user 
-  //////
-  ////
-  ///
-  //
-  const handleAdding = async (userData) => {
-    
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditingData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSave = async () => {
     try {
-    // Add further logic for form submission, e.g., API call
-    const response = await  fetch (`${API_BASE_URL}/addUser.php`,{
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded' // Change this from 'application/json'
-      },
-      body: new URLSearchParams(userData).toString() // Convert to form URL encoded format
-    });
-    if (!response.ok){
-        throw new Error(`HTTP error: ${response.status}`);
+      const endpoint = activeTab === 'students' 
+        ? 'updateStudent.php' 
+        : activeTab === 'supervisors'
+        ? 'updateSupervisor.php'
+        : 'updateUser.php';
+
+      const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editingData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.status === 'success') {
+          // Update local state
+          if (activeTab === 'students') {
+            setStudents(prev => prev.map(item => 
+              item.studentID === editingData.studentID ? editingData : item
+            ));
+          } else if (activeTab === 'supervisors') {
+            setSupervisors(prev => prev.map(item => 
+              item.supervisorID === editingData.supervisorID ? editingData : item
+            ));
+          } else {
+            setAdmins(prev => prev.map(item => 
+              item.userID === editingData.userID ? editingData : item
+            ));
+          }
+          setEditingItem(null);
+          setEditingData({});
+        } else {
+          alert(result.message);
+        }
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('Error saving changes');
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingItem(null);
+  };
+
+  const getFilteredData = () => {
+    const searchLower = searchTerm.toLowerCase();
     
+    switch (activeTab) {
+      case 'students':
+        return students.filter(student => 
+          student.first_name?.toLowerCase().includes(searchLower) ||
+          student.last_name?.toLowerCase().includes(searchLower) ||
+          student.matricule?.toLowerCase().includes(searchLower) ||
+          student.email?.toLowerCase().includes(searchLower)
+        );
+      case 'supervisors':
+        return supervisors.filter(supervisor =>
+          supervisor.first_name?.toLowerCase().includes(searchLower) ||
+          supervisor.last_name?.toLowerCase().includes(searchLower) ||
+          supervisor.email?.toLowerCase().includes(searchLower)
+        );
+      case 'admins':
+        return admins.filter(admin =>
+          admin.userName?.toLowerCase().includes(searchLower)
+        );
+      default:
+        return [];
     }
-    const data = await  response.json();
-    console.log(data);
-    if (data.message ==='user added with success'){
-      setUsers(prevUsers => [...prevUsers, {
-        userID: data.userID,
-        userName: userData.userName,
-        Email: '', // Default value
-        PhoneNumber: '', // Default value
-        Role: userData.Role
-    }]);        SetShowAddUser(false);
-        
+  };
 
+  const renderEditableCell = (field, value) => {
+    if (field === 'education_level') {
+      return (
+        <select
+          name={field}
+          value={value}
+          onChange={handleEditChange}
+          className="w-full px-2 py-1 border border-gray-300 rounded-md"
+        >
+          <option value="licence">Licence</option>
+          <option value="master">Master</option>
+        </select>
+      );
     }
-    else {
-        console.log('Error: ' + data.message);
-    }
-}catch (error){
-    console.log('request error :'+ error.message);
-}
-//emplty the iputs
+    return (
+      <input
+        type="text"
+        name={field}
+        value={value || ''}
+        onChange={handleEditChange}
+        className="w-full px-2 py-1 border border-gray-300 rounded-md"
+      />
+    );
+  };
 
+  const renderTable = () => {
+    const data = getFilteredData();
 
-
-};
-////////////////////
-const handleImportedUsers = async (importedData) => {
-  console.log("Data received in parent:", importedData);
-  
-  // Add default role to imported users if needed
-  const importedWithRole = importedData.map(user => ({
-    ...user,
-    Role: 'user' // or 'supervisor' or any default value
-  }));
-  
-  try {
-    // API call to save the imported users
-    const response = await fetch(`${API_BASE_URL}/ImportedData.php`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(importedWithRole)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    console.log(result);
-    
-    if (result.message === 'imported user/s saved with success') {
-      // Update the local state with the new users
-      setUsers(prevUsers => [...prevUsers, ...importedWithRole]);
-      //console.log('the new table:',[...users, ...importedWithRole].map(user=>user.userName));
-      alert("Import successful!");
-    } else {
-      console.log('Error: ' + result.message);
-      alert("Impor failed");
-
-    }
-  } catch (error) {
-    console.log('Request error: ' + error.message);
-  }
-};
+    return (
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            {activeTab === 'students' ? (
+              <>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Matricule</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Speciality</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
+              </>
+            ) : activeTab === 'supervisors' ? (
+              <>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teams</th>
+              </>
+            ) : (
+              <>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
+              </>
+            )}
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {data.map((item) => (
+            <tr key={item.studentID || item.supervisorID || item.userID}>
+              {activeTab === 'students' ? (
+                <>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? 
+                      renderEditableCell('matricule', editingData.matricule) : 
+                      item.matricule}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? (
+                      <div className="flex space-x-2">
+                        {renderEditableCell('first_name', editingData.first_name)}
+                        {renderEditableCell('last_name', editingData.last_name)}
+                      </div>
+                    ) : (
+                      `${item.first_name} ${item.last_name}`
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? 
+                      renderEditableCell('email', editingData.email) : 
+                      item.email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? 
+                      renderEditableCell('speciality', editingData.speciality) : 
+                      item.speciality}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? 
+                      renderEditableCell('education_level', editingData.education_level) : 
+                      item.education_level}
+                  </td>
+                </>
+              ) : activeTab === 'supervisors' ? (
+                <>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? (
+                      <div className="flex space-x-2">
+                        {renderEditableCell('first_name', editingData.first_name)}
+                        {renderEditableCell('last_name', editingData.last_name)}
+                      </div>
+                    ) : (
+                      `${item.first_name} ${item.last_name}`
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? 
+                      renderEditableCell('email', editingData.email) : 
+                      item.email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? 
+                      renderEditableCell('phone_number', editingData.phone_number) : 
+                      item.phone_number}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{item.teams || '0'}</td>
+                </>
+              ) : (
+                <>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? 
+                      renderEditableCell('userName', editingData.userName) : 
+                      item.userName}
+                  </td>
+                </>
+              )}
+              <td className="px-6 py-4 whitespace-nowrap text-right">
+                <div className="flex items-center justify-end space-x-2">
+                  {editingItem === item ? (
+                    <>
+                      <button 
+                        onClick={handleSave}
+                        className="text-green-600 hover:text-green-900"
+                      >
+                        <Save size={16} />
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setEditingItem(null);
+                          setEditingData({});
+                        }}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        <X size={16} />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button 
+                        onClick={() => handleEdit(item)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(item.studentID || item.supervisorID || item.userID)} 
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
 
   return (
-    
     <div className="flex flex-col h-screen">
       <Header />
       <div className="flex flex-1 overflow-hidden">
         <SideBar />
         <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-800 flex items-center">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-800 flex items-center mb-4">
               <Users className="mr-2" size={24} />
               Manage Users
             </h1>
             
-            <div className="flex items-center space-x-4">
-              <ImportButton onImport={handleImportedUsers} />
-              <button onClick={() => SetShowAddUser(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
-                <UserPlus size={16} className="mr-2" />
-                Add New User
+            {/* Tab Navigation */}
+            <div className="flex space-x-4 mb-6">
+              <button
+                className={`px-4 py-2 rounded-lg ${
+                  activeTab === 'students'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+                onClick={() => setActiveTab('students')}
+              >
+                Students
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg ${
+                  activeTab === 'supervisors'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+                onClick={() => setActiveTab('supervisors')}
+              >
+                Supervisors
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg ${
+                  activeTab === 'admins'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+                onClick={() => setActiveTab('admins')}
+              >
+                Admins
               </button>
             </div>
-            {ShowAddUser && <AddUser onAddUser={handleAdding} onClose={() => SetShowAddUser(false)} />}
-          </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            {/* Search and Filter Bar */}
-            <div className="mb-6 flex items-center gap-4">
+            {/* Actions Bar */}
+            <div className="flex items-center mb-6">
               <div className="relative flex-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search size={18} className="text-gray-400" />
-                </div>
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
-                  placeholder="Search users by name, email or role..."
-                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder={`Search ${activeTab}...`}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[150px]"
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
               >
-                <option value="all">All Roles</option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-                <option value="supervisor">Supervisor</option>
-              </select>
+                <UserPlus size={20} className="mr-2" />
+                Add New {activeTab.slice(0, -1)}
+              </button>
             </div>
 
-            {/* Users Table */}
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Phone Number
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredUsers.map((user) => (
-                    <tr key={user.userID} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {EditingID === user.userID ? (
-                          <input 
-                            className="w-full px-2 py-1 border border-gray-300 rounded-md" 
-                            value={EditedData.userName || ''} 
-                            onChange={(e) => handleInputChange(e, 'userName')} 
-                          />
-                        ) : (
-                          <span className="font-medium text-gray-900">{user.userName}</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {EditingID === user.userID ? (
-                          <input 
-                            className="w-full px-2 py-1 border border-gray-300 rounded-md" 
-                            value={EditedData.Email || ''} 
-                            onChange={(e) => handleInputChange(e, 'Email')} 
-                          />
-                        ) : (
-                          <span className="text-gray-500">{user.Email}</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {EditingID === user.userID ? (
-                          <input 
-                            className="w-full px-2 py-1 border border-gray-300 rounded-md" 
-                            value={EditedData.PhoneNumber || ''} 
-                            onChange={(e) => handleInputChange(e, 'PhoneNumber')} 
-                          />
-                        ) : (
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.PhoneNumber === 'Active' ? 'bg-green-100 text-green-800' : 'text-gray-500'
-                          }`}>
-                            {user.PhoneNumber}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {EditingID === user.userID ? (
-                          <select 
-                            className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                            value={EditedData.Role || ''}
-                            onChange={(e) => handleInputChange(e, 'Role')}
-                          >
-                            <option value="admin">admin</option>
-                            <option value="user">User</option>
-                            <option value="supervisor">supervisor</option>
+            {/* Add Form Modal */}
+            {showAddForm && (
+              activeTab === 'students' 
+                ? <AddStudent 
+                    onClose={() => setShowAddForm(false)}
+                    onAddStudent={(data) => handleAddUser(data, 'student')}
+                  />
+                : activeTab === 'supervisors'
+                ? <AddSupervisor
+                    onClose={() => setShowAddForm(false)}
+                    onAddSupervisor={(data) => handleAddUser(data, 'supervisor')}
+                  />
+                : <AddAdmin
+                    onClose={() => setShowAddForm(false)}
+                    onAddAdmin={(data) => handleAddUser(data, 'admin')}
+                  />
+            )}
 
-                          </select>
-                        ) : (
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.Role === 'admin' ? 'bg-purple-100 text-green-800' : 
-                            user.Role === 'user' ? 'bg-blue-100 text-blue-800' : 
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {user.Role}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end space-x-2">
-                          {EditingID === user.userID ? (
-                            <>
-                              <button onClick={saveUser} className="text-green-600 hover:text-green-900">
-                                <Save size={16} />
-                              </button>
-                              <button onClick={cancelEditing} className="text-red-600 hover:text-red-900">
-                                <X size={16} />
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button onClick={() => startEditing(user)} className="text-blue-600 hover:text-blue-900">
-                                <Edit size={16} />
-                              </button>
-                              <button onClick={() => handleDelete(user.userID)} className="text-red-600 hover:text-red-900">
-                                <Trash2 size={16} />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Pagination - Simple Version */}
-            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
-              <div className="flex flex-1 justify-between sm:hidden">
-                <button className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                  Previous
-                </button>
-                <button className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                  Next
-                </button>
-              </div>
-              <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    Showing <span className="font-medium">1</span> to <span className="font-medium">{filteredUsers.length}</span> of{" "}
-                    <span className="font-medium">{filteredUsers.length}</span> results
-                  </p>
-                </div>
-                <div>
-                  <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                    <button className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-                      <span className="sr-only">Previous</span>
-                      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                    <button aria-current="page" className="relative z-10 inline-flex items-center bg-blue-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                      1
-                    </button>
-                    <button className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-                      <span className="sr-only">Next</span>
-                      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </nav>
-                </div>
+            {/* Content Table */}
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="overflow-x-auto">
+                {renderTable()}
               </div>
             </div>
           </div>
