@@ -1,5 +1,9 @@
-# Node.js dependencies
-node_modules/
+# Dependencies
+node_modules
+**/node_modules/
+/Front-end/node_modules/
+/Front-end/react-form/node_modules/
+vendor/
 
 # Logs
 logs/
@@ -7,27 +11,61 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+php_errors.log
 
 # OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Build output
 dist/
 build/
+/Front-end/react-form/build/
 
 # IDE specific files
 .vscode/
 .idea/
+*.sublime-workspace
+*.sublime-project
+.phpintel/
 
 # Environment variables
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
+phpunit.xml
 
 # React specific
 public/*.cache
 public/*.map
+.cache/
+coverage/
 
-# Ignore package-lock.json and yarn.lock if not needed
+# PHP specific
+composer.phar
+/vendor/
+.php_cs.cache
+
+# Package managers
 package-lock.json
 yarn.lock
+composer.lock
+
+# Testing
+/coverage
+.phpunit.result.cache
+
+# Optional - Backend config files that might contain sensitive data
+/Back-end/config.php
+*.config.php
+
+# Optional - Local development files
+*.local.php
+*.local.json
