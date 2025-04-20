@@ -13,58 +13,75 @@ ini_set('log_errors', 1);
 
 // Get JSON input instead of POST data
 $jsonData = file_get_contents('php://input');
-$users = json_decode($jsonData, true);
+$data = json_decode($jsonData, true);
 
-if (!is_array($users)) {
-    echo json_encode(['message' => 'Invalid data format. Expected array of users.']);
+if (!isset($data['type']) || !isset($data['users']) || !is_array($data['users'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid data format. Expected type and array of users.']);
     exit;
 }
 
+$type = $data['type'];
+$users = $data['users'];
 $successCount = 0;
 $errorCount = 0;
 
 try {
-    // Prepare the statement once outside the loop
-    $stmt = $conn->prepare("INSERT INTO user (userName, Password, Email, PhoneNumber, Role) VALUES (?, ?, ?, ?, ?)");
-    
-    // Loop through each user in the array
-    foreach ($users as $user) {
-        $userName = $user["userName"] ?? '';
-        $Password = $user["Password"] ?? 'defaultPassword'; // You might want a default
-        $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
-        $Email = $user["Email"] ?? '';
-        $PhoneNumber = $user["PhoneNumber"] ?? '';
-        $Role = $user["Role"] ?? 'user'; // Default role if not specified
-        
-        // Validate input for each user
-        if (empty($userName)) {
-            $errorCount++;
-            continue; // Skip this user but process others
+    $conn->begin_transaction();
+
+    if ($type === 'supervisor') {
+        // First create the user account
+        $stmt1 = $conn->prepare("INSERT INTO user (userName, Password, Role) VALUES (?, ?, 'supervisor')");
+        $stmt2 = $conn->prepare("INSERT INTO supervisor (userID, first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?, ?)");
+
+        foreach ($users as $user) {
+            $username = $user['userName'] ?? '';
+            $password = $user['password'] ?? $username; // Default password to username if not provided
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            // Insert into user table
+            $stmt1->bind_param("ss", $username, $hashedPassword);
+            if ($stmt1->execute()) {
+                $userId = $conn->insert_id;
+                
+                // Insert into supervisor table
+                $stmt2->bind_param("issss", 
+                    $userId,
+                    $user['first_name'] ?? '',
+                    $user['last_name'] ?? '',
+                    $user['email'] ?? '',
+                    $user['phone_number'] ?? ''
+                );
+                
+                if ($stmt2->execute()) {
+                    $successCount++;
+                } else {
+                    $errorCount++;
+                }
+            } else {
+                $errorCount++;
+            }
         }
         
-        // Bind parameters and execute for each user
-        $stmt->bind_param("sssss", $userName, $hashedPassword, $Email, $PhoneNumber, $Role);
-        
-        if ($stmt->execute()) {
-            $successCount++;
-        } else {
-            $errorCount++;
-        }
+        $stmt1->close();
+        $stmt2->close();
     }
     
-    $stmt->close();
-    $conn->close();
+    $conn->commit();
     
-    if ($successCount > 0) {
-        echo json_encode([
-            'message' => 'imported user/s saved with success',
-            'success' => $successCount,
-            'errors' => $errorCount
-        ]);
-    } else {
-        echo json_encode(['message' => 'error saving imported user/s']);
-    }
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Import completed successfully',
+        'success_count' => $successCount,
+        'error_count' => $errorCount
+    ]);
+    
 } catch (Exception $e) {
-    echo json_encode(['message' => 'Error: ' . $e->getMessage()]);
+    $conn->rollback();
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Error during import: ' . $e->getMessage()
+    ]);
 }
+
+$conn->close();
 ?>

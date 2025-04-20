@@ -15,22 +15,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Validate required fields
-if (!isset($data['first_name']) || !isset($data['last_name']) || !isset($data['password'])) {
+if (!isset($data['first_name']) || !isset($data['last_name']) || !isset($data['password']) || !isset($data['userName'])) {
     echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
     exit;
 }
 
 try {
     $conn->begin_transaction();
-
-    // Generate a username from first name and last name
-    $username = strtolower($data['first_name'] . '.' . $data['last_name']);
     
-    // First create the user account
+    // First create the user account using the provided username
     $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
     $sql1 = "INSERT INTO user (userName, Password, Role) VALUES (?, ?, 'supervisor')";
     $stmt1 = $conn->prepare($sql1);
-    $stmt1->bind_param("ss", $username, $hashedPassword);
+    $stmt1->bind_param("ss", $data['userName'], $hashedPassword);
     $stmt1->execute();
     
     $userId = $conn->insert_id;
@@ -56,7 +53,7 @@ try {
         'status' => 'success',
         'message' => 'Supervisor added successfully',
         'supervisorId' => $supervisorId,
-        'username' => $username
+        'username' => $data['userName']
     ]);
 
 } catch (Exception $e) {

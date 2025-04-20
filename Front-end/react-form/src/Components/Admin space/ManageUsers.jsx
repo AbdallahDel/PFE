@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Search, Edit, Trash2, UserPlus, Save, X } from 'lucide-react';
+import { Users, Search, Edit, Trash2, UserPlus, Save, X, Upload } from 'lucide-react';
 import SideBar from './SideBar';
 import Header from './Header';
 import AddStudent from './AddStudent';
 import AddSupervisor from './AddSupervisor';
 import AddAdmin from './AddAdmin';
+import * as XLSX from 'xlsx';
 
 const ManageUsers = () => {
   const API_BASE_URL = 'http://localhost/PFE/Back-end';
@@ -135,13 +136,25 @@ const ManageUsers = () => {
         ? 'updateSupervisor.php'
         : 'updateUser.php';
 
+      // Include the item ID based on the active tab
+      const itemId = activeTab === 'students' 
+        ? editingData.studentID 
+        : activeTab === 'supervisors'
+        ? editingData.supervisorID
+        : editingData.userID;
+
+      const dataToSend = {
+        ...editingData,
+        [`${activeTab.slice(0, -1)}ID`]: itemId
+      };
+
       const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(editingData)
+        body: JSON.stringify(dataToSend)
       });
 
       if (response.ok) {
@@ -150,19 +163,20 @@ const ManageUsers = () => {
           // Update local state
           if (activeTab === 'students') {
             setStudents(prev => prev.map(item => 
-              item.studentID === editingData.studentID ? editingData : item
+              item.studentID === itemId ? { ...item, ...editingData } : item
             ));
           } else if (activeTab === 'supervisors') {
             setSupervisors(prev => prev.map(item => 
-              item.supervisorID === editingData.supervisorID ? editingData : item
+              item.supervisorID === itemId ? { ...item, ...editingData } : item
             ));
           } else {
             setAdmins(prev => prev.map(item => 
-              item.userID === editingData.userID ? editingData : item
+              item.userID === itemId ? { ...item, ...editingData } : item
             ));
           }
           setEditingItem(null);
           setEditingData({});
+          alert('Changes saved successfully');
         } else {
           alert(result.message);
         }
@@ -245,10 +259,10 @@ const ManageUsers = () => {
               </>
             ) : activeTab === 'supervisors' ? (
               <>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teams</th>
               </>
             ) : (
               <>
@@ -297,6 +311,11 @@ const ManageUsers = () => {
               ) : activeTab === 'supervisors' ? (
                 <>
                   <td className="px-6 py-4 whitespace-nowrap">
+                    {editingItem === item ? 
+                      renderEditableCell('userName', editingData.userName) : 
+                      item.userName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {editingItem === item ? (
                       <div className="flex space-x-2">
                         {renderEditableCell('first_name', editingData.first_name)}
@@ -316,7 +335,6 @@ const ManageUsers = () => {
                       renderEditableCell('phone_number', editingData.phone_number) : 
                       item.phone_number}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{item.teams || '0'}</td>
                 </>
               ) : (
                 <>
@@ -370,6 +388,77 @@ const ManageUsers = () => {
         </tbody>
       </table>
     );
+  };
+
+  const handleImportFile = async (event, type) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        // Format data based on type
+        const formattedData = data.map(row => {
+          if (type === 'student') {
+            return {
+              first_name: row.first_name || '',
+              last_name: row.last_name || '',
+              email: row.email || '',
+              speciality: row.speciality || '',
+              education_level: row.education_level || 'licence',
+              matricule: row.matricule || '',
+              phone_number: row.phone_number || '',
+              password: row.password || row.matricule
+            };
+          } else if (type === 'supervisor') {
+            return {
+              userName: row.userName || '',
+              first_name: row.first_name || '',
+              last_name: row.last_name || '',
+              email: row.email || '',
+              phone_number: row.phone_number || '',
+              password: row.password || row.userName
+            };
+          }
+        });
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/ImportedData.php`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              type: type,
+              users: formattedData
+            })
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            if (result.status === 'success') {
+              alert(`Successfully imported ${result.success_count} ${type}s. ${result.error_count} errors.`);
+              fetchData(); // Refresh the data
+            } else {
+              alert('Error during import: ' + result.message);
+            }
+          }
+        } catch (error) {
+          console.error(`Error importing ${type}s:`, error);
+          alert(`Error importing ${type}s`);
+        }
+      } catch (error) {
+        console.error('Error reading Excel file:', error);
+        alert('Error reading Excel file');
+      }
+    };
+    reader.readAsBinaryString(file);
   };
 
   return (
@@ -430,6 +519,24 @@ const ManageUsers = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
+              {(activeTab === 'students' || activeTab === 'supervisors') && (
+                <div className="ml-4">
+                  <input
+                    type="file"
+                    id={`import${activeTab}`}
+                    accept=".xlsx,.xls,.csv"
+                    onChange={(e) => handleImportFile(e, activeTab.slice(0, -1))}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor={`import${activeTab}`}
+                    className="cursor-pointer px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center"
+                  >
+                    <Upload size={20} className="mr-2" />
+                    Import {activeTab}
+                  </label>
+                </div>
+              )}
               <button
                 onClick={() => setShowAddForm(true)}
                 className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"

@@ -39,18 +39,6 @@ try {
     );
     $stmt1->execute();
 
-    // Update user table if password is provided
-    if (isset($data['password']) && !empty($data['password'])) {
-        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-        $sql2 = "UPDATE user u 
-                 JOIN supervisor s ON s.userID = u.userID 
-                 SET u.Password = ? 
-                 WHERE s.supervisorID = ?";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->bind_param("si", $hashedPassword, $data['supervisorID']);
-        $stmt2->execute();
-    }
-
     $conn->commit();
     echo json_encode(['status' => 'success', 'message' => 'Supervisor updated successfully']);
 

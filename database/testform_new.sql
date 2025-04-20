@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Apr 19, 2025 at 07:14 PM
+-- Generation Time: Apr 20, 2025 at 01:22 PM
 -- Server version: 11.5.2-MariaDB
 -- PHP Version: 8.3.14
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `project` (
   `supervisorID` int(11) NOT NULL,
   PRIMARY KEY (`projectID`),
   KEY `fk_project_supervisor` (`supervisorID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -60,14 +60,15 @@ CREATE TABLE IF NOT EXISTS `student` (
   UNIQUE KEY `matricule` (`matricule`),
   KEY `fk_student_user` (`userID`),
   KEY `fk_student_team` (`teamID`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `student`
 --
 
 INSERT INTO `student` (`studentID`, `userID`, `last_name`, `first_name`, `email`, `speciality`, `education_level`, `matricule`, `phone_number`, `teamID`) VALUES
-(1, 6, 'idk', 'hocine', 'hocine@gmail.com', 'SI', 'master', '111111', '0657713233', NULL);
+(2, 7, 'becis', 'hocine', 'b6hocine@gmail.com', 'ISIL', 'licence', '212131050574', '0657713233', 1),
+(3, 8, 'delhoum', 'abdallah', 'b6hocine@gmail.com', 'ISIL', 'licence', '212131050575', '0657713233', 2);
 
 -- --------------------------------------------------------
 
@@ -85,14 +86,7 @@ CREATE TABLE IF NOT EXISTS `supervisor` (
   `userID` int(11) NOT NULL,
   PRIMARY KEY (`supervisorID`),
   KEY `fk_supervisor_user` (`userID`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `supervisor`
---
-
-INSERT INTO `supervisor` (`supervisorID`, `first_name`, `last_name`, `email`, `phone_number`, `userID`) VALUES
-(1, 'barr', 'mohammed', 'barr_mohammed@gmail.com', '222222222', 5);
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -104,12 +98,40 @@ DROP TABLE IF EXISTS `team`;
 CREATE TABLE IF NOT EXISTS `team` (
   `teamID` int(11) NOT NULL AUTO_INCREMENT,
   `teamName` varchar(100) NOT NULL,
-  `supervisorID` int(11) NOT NULL,
+  `supervisorID` int(11) DEFAULT NULL,
   `projectID` int(11) DEFAULT NULL,
   PRIMARY KEY (`teamID`),
-  UNIQUE KEY `teamName` (`teamName`),
-  KEY `fk_supervisor` (`supervisorID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  KEY `fk_team_supervisor` (`supervisorID`),
+  KEY `fk_team_project` (`projectID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `team`
+--
+
+INSERT INTO `team` (`teamID`, `teamName`, `supervisorID`, `projectID`) VALUES
+(1, 'hocine_team', NULL, NULL),
+(2, 'abdallah_team', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `team_invites`
+--
+
+DROP TABLE IF EXISTS `team_invites`;
+CREATE TABLE IF NOT EXISTS `team_invites` (
+  `inviteID` int(11) NOT NULL AUTO_INCREMENT,
+  `from_studentID` int(11) NOT NULL,
+  `to_studentID` int(11) NOT NULL,
+  `teamID` int(11) NOT NULL,
+  `status` enum('pending','accepted','declined') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`inviteID`),
+  KEY `fk_invite_from_student` (`from_studentID`),
+  KEY `fk_invite_to_student` (`to_studentID`),
+  KEY `fk_invite_team` (`teamID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -125,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `Role` enum('admin','user','supervisor') NOT NULL,
   PRIMARY KEY (`userID`),
   UNIQUE KEY `userName` (`userName`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `user`
@@ -133,11 +155,46 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 INSERT INTO `user` (`userID`, `userName`, `Password`, `Role`) VALUES
 (1, 'admin', '$2y$10$qg5N0konySSDfrCwS8/ruu38aO3by2hZ.goOerCkBJkwPTogDzWLu', 'admin'),
-(2, 'superadmin', '$2y$10$AYbZfkixGkkMX.5t5Vl/3uQSRGR/paSEnnkHJ9Cj6QQWl09E883Ci', 'admin'),
-(3, 'hocine', '$2y$10$YFzm50.hJ1hr.E09zy4Ef.clC8cMCf0MCfyfOKUULOk2B42TFm5sK', 'user'),
-(4, 'supervisor', '$2y$10$bBDAMfpZkT85AQM8thmbOuRmZAtxA21iWXjgV/1JSFp/9kj3OZx4i', 'supervisor'),
-(5, 'barr.mohammed', '$2y$10$oKPNBIABz46LAL62M7TIx.Z1PcCtIAXfAHIbKt0btlYk7YGte7W66', 'supervisor'),
-(6, '111111', '$2y$10$i2NbeURJRr4egugXnnkN6uYL4xqgau4ea3WvZK34.DKdRh05odtXC', 'user');
+(7, '212131050574', '$2y$10$XNoGGkJaKBkVx1pagTEyY.VvJ6fo2wzgC/9y7DNf6Pcnfep4yS2A2', 'user'),
+(8, '212131050575', '$2y$10$3meQBNdONhsmSYOdS8bqNeljBB9xYHUw51IGW03EeECtol7WCkcBy', 'user');
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `project`
+--
+ALTER TABLE `project`
+  ADD CONSTRAINT `fk_project_supervisor` FOREIGN KEY (`supervisorID`) REFERENCES `supervisor` (`supervisorID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `student`
+--
+ALTER TABLE `student`
+  ADD CONSTRAINT `fk_student_team` FOREIGN KEY (`teamID`) REFERENCES `team` (`teamID`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_student_user` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `supervisor`
+--
+ALTER TABLE `supervisor`
+  ADD CONSTRAINT `fk_supervisor_user` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `team`
+--
+ALTER TABLE `team`
+  ADD CONSTRAINT `fk_team_project` FOREIGN KEY (`projectID`) REFERENCES `project` (`projectID`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_team_supervisor` FOREIGN KEY (`supervisorID`) REFERENCES `supervisor` (`supervisorID`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `team_invites`
+--
+ALTER TABLE `team_invites`
+  ADD CONSTRAINT `fk_invite_from_student` FOREIGN KEY (`from_studentID`) REFERENCES `student` (`studentID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_invite_team` FOREIGN KEY (`teamID`) REFERENCES `team` (`teamID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_invite_to_student` FOREIGN KEY (`to_studentID`) REFERENCES `student` (`studentID`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

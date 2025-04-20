@@ -25,15 +25,6 @@ try {
     $stmt->bind_param("si", $data['userName'], $data['userID']);
     $stmt->execute();
 
-    // Update password if provided
-    if (isset($data['password']) && !empty($data['password'])) {
-        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-        $sql2 = "UPDATE user SET Password = ? WHERE userID = ? AND Role = 'admin'";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->bind_param("si", $hashedPassword, $data['userID']);
-        $stmt2->execute();
-    }
-
     echo json_encode(['status' => 'success', 'message' => 'User updated successfully']);
 
 } catch (Exception $e) {

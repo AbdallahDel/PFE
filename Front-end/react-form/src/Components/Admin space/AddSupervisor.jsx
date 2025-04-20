@@ -7,6 +7,7 @@ export default function AddSupervisor({onClose, onAddSupervisor}) {
     last_name: '',
     email: '',
     phone_number: '',
+    userName: '',
     password: ''
   });
 
@@ -20,7 +21,7 @@ export default function AddSupervisor({onClose, onAddSupervisor}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!supervisorData.first_name || !supervisorData.last_name || !supervisorData.password) {
+    if (!supervisorData.first_name || !supervisorData.last_name || !supervisorData.userName || !supervisorData.password) {
       alert("Please fill in all required fields!");
       return;
     }
@@ -64,6 +65,18 @@ export default function AddSupervisor({onClose, onAddSupervisor}) {
                 required
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Username *</label>
+            <input
+              type="text"
+              name="userName"
+              value={supervisorData.userName}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+              required
+            />
           </div>
 
           <div>

@@ -23,16 +23,17 @@ if (!isset($data['first_name']) || !isset($data['last_name']) || !isset($data['m
 try {
     $conn->begin_transaction();
 
-    // First create the user account
+    // First create the user account using matricule as username
     $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
     $sql1 = "INSERT INTO user (userName, Password, Role) VALUES (?, ?, 'user')";
     $stmt1 = $conn->prepare($sql1);
+    // Use matricule as username
     $stmt1->bind_param("ss", $data['matricule'], $hashedPassword);
     $stmt1->execute();
     
     $userId = $conn->insert_id;
 
-    // Then create the student record
+    // Create the student record
     $sql2 = "INSERT INTO student (userID, first_name, last_name, email, speciality, education_level, matricule, phone_number) 
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt2 = $conn->prepare($sql2);
@@ -49,13 +50,31 @@ try {
     $stmt2->execute();
     
     $studentId = $conn->insert_id;
+
+    // Create a new team with the student's first name
+    $teamName = $data['first_name'] . "_team"; // Using first name for team name
+    $sql3 = "INSERT INTO team (teamName) VALUES (?)";
+    $stmt3 = $conn->prepare($sql3);
+    $stmt3->bind_param("s", $teamName);
+    $stmt3->execute();
+    
+    $teamId = $conn->insert_id;
+
+    // Update the student's teamID
+    $sql4 = "UPDATE student SET teamID = ? WHERE studentID = ?";
+    $stmt4 = $conn->prepare($sql4);
+    $stmt4->bind_param("ii", $teamId, $studentId);
+    $stmt4->execute();
     
     $conn->commit();
     
     echo json_encode([
         'status' => 'success',
-        'message' => 'Student added successfully',
-        'studentId' => $studentId
+        'message' => 'Student added successfully and assigned to a new team',
+        'studentId' => $studentId,
+        'teamId' => $teamId,
+        'teamName' => $teamName,
+        'username' => $data['matricule']
     ]);
 
 } catch (Exception $e) {

@@ -1,0 +1,21 @@
+first_name,last_name,email,speciality,education_level,matricule,phone_number,password
+John,Doe,john.doe@example.com,Computer Science,licence,202079182645,+1234567890,pass001
+Jane,Smith,jane.smith@example.com,Electronics,master,212173892017,+1234567891,pass002
+Alice,Johnson,alice.j@example.com,Networking,licence,222259103847,+1234567892,pass003
+Bob,Brown,bob.brown@example.com,Computer Science,master,232381029384,+1234567893,pass004
+Emily,Davis,emily.davis@example.com,Electronics,licence,242472910384,+1234567894,pass005
+Michael,Wilson,michael.w@example.com,Networking,master,202098017263,+1234567895,pass006
+Sarah,Miller,sarah.miller@example.com,Computer Science,licence,212112394765,+1234567896,pass007
+David,Moore,david.moore@example.com,Electronics,master,222274829103,+1234567897,pass008
+Olivia,Taylor,olivia.t@example.com,Networking,licence,232350918273,+1234567898,pass009
+Chris,Anderson,chris.a@example.com,Computer Science,master,242439187426,+1234567899,pass010
+Sophia,Thomas,sophia.t@example.com,Electronics,licence,202068592037,+1234567800,pass011
+Daniel,Jackson,daniel.j@example.com,Networking,master,212183472910,+1234567801,pass012
+Grace,White,grace.w@example.com,Computer Science,licence,222246091827,+1234567802,pass013
+Andrew,Harris,andrew.h@example.com,Electronics,master,232331724856,+1234567803,pass014
+Lily,Martin,lily.m@example.com,Networking,licence,242459283017,+1234567804,pass015
+Matthew,Thompson,matt.t@example.com,Computer Science,master,202081274039,+1234567805,pass016
+Ella,Garcia,ella.g@example.com,Electronics,licence,212173920184,+1234567806,pass017
+Ryan,Martinez,ryan.m@example.com,Networking,master,222262401928,+1234567807,pass018
+Chloe,Robinson,chloe.r@example.com,Computer Science,licence,232392037418,+1234567808,pass019
+Luke,Clark,luke.c@example.com,Electronics,master,242484710239,+1234567809,pass020

@@ -2,7 +2,6 @@ import React from 'react';
 import LoginForm from './Components/LoginForm';
 import {BrowserRouter as Router ,Routes,Route} from 'react-router-dom'
 import Home from './Components/Home';
-import SignUp from './Components/SignUp';
 import PrivateRoute from './Components/PrivateRoute';
 import Profile from './Components/Profile';
 import Dashboard from './Components/Admin space/Dashboard';
@@ -18,7 +17,6 @@ function App() {
     <Router>
       <Routes>
       <Route path="/" element={<LoginForm />} />
-      <Route path="/SignUp" element={<SignUp/>} />
       
       <Route
       path="/home"
