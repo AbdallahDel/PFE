@@ -24,9 +24,9 @@ if ($result->num_rows >0){
                         'message'=>'admin access',
     ]);
 }
-     if ($user['Role']==='user') {
-        echo json_encode(['role'=>'user',
-                        'message'=>'user access',
+     if ($user['Role']==='student') {
+        echo json_encode(['role'=>'student',
+                        'message'=>'student access',
         
     ]);
     }

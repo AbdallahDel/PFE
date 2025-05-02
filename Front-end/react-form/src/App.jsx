@@ -8,8 +8,10 @@ import PrivateRoute from './Components/PrivateRoute';
 import Profile from './Components/Profile';
 import Dashboard from './Components/Admin space/Dashboard';
 import ManageUsers from './Components/Admin space/ManageUsers';
-import ManageSupervisor from './Components/Admin space/ManageSupervisor';
+import ManageStudent from './Components/Admin space/ManageStudent';
 import SupervisorHeader from './Components/Supervisor space/SupervisorHome';
+import ManageSupervisor from './Components/Admin space/ManageEncadrants';
+import ManageSujets from './Components/Admin space/ManageSujets';
 
 
 document.documentElement.classList.add('dark')
@@ -65,9 +67,21 @@ function App() {
         } />
 
         
+      <Route path="/manageStudent"  element={
+        <PrivateRoute adminOnly ={true}>
+        <ManageStudent />
+        </PrivateRoute>
+        } />
+
       <Route path="/manageSupervisor"  element={
         <PrivateRoute adminOnly ={true}>
-        <ManageSupervisor />
+        <ManageSupervisor/>
+        </PrivateRoute>
+        } />
+
+      <Route path="/sujets"  element={
+        <PrivateRoute adminOnly ={true}>
+        <ManageSujets/>
         </PrivateRoute>
         } />
       

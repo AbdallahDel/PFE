@@ -23,7 +23,7 @@ const PrivateRoute = ({ children, adminOnly = false }) => {
           console.log('Server response:', data); 
           setIsAuth(data.status === 'success');
           setIsAdmin(data.role === 'admin');
-          setIsStudent(data.role === 'user');
+          setIsStudent(data.role === 'student');
           setIsSupervisor(data.role === 'supervisor');
         
         } else {

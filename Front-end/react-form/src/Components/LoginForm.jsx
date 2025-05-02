@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SignUp from './SignUp';
 import { Link } from 'react-router-dom';
 function LoginForm() {
-  const [username, setUsername] = useState('');
+  const [loginInput, setloginInput] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -15,14 +15,14 @@ function LoginForm() {
     e.preventDefault();
     
 
-    if (!username || !password) {
+    if (!loginInput || !password) {
       setError('Both fields are required.');
       return;
     }
 
     // Create FormData object
     const formData = new FormData();
-    formData.append('userName', username); // Match PHP $_POST name
+    formData.append('loginInput', loginInput); // Match PHP $_POST name
     formData.append('Password', password); // Match PHP $_POST name
 
     try {
@@ -40,7 +40,7 @@ function LoginForm() {
 
       const data = await response.json();
 
-      if (data.success && data.role === 'user') {
+      if (data.success && data.role === 'student') {
         setSuccess('Login successful!');
         setError('');
         navigate('/Home');
@@ -65,8 +65,7 @@ function LoginForm() {
     }
 
     // Reset form after submission
-    setUsername('');
-    setPassword('');
+    
   };
 
 
@@ -84,14 +83,14 @@ function LoginForm() {
 
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  matricule
+                <label htmlFor="matricule" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Matricule
                 </label>
                 <input
                   type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="matricule"
+                  value={loginInput}
+                  onChange={(e) => setloginInput(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required
                 />

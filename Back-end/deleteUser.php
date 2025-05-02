@@ -32,8 +32,32 @@ if (!isset($userId) || !is_numeric($userId)) {
 }
 
 
+//delete form supervisor table
+$supervisorSql = "DELETE FROM supervisors WHERE userID =?";
+$stmtSupervisor = $conn->prepare($supervisorSql);
+$stmtSupervisor->bind_param("i", $userId);
 
-// Correct SQL syntax for DELETE
+if (!$stmtSupervisor->execute()) {
+    echo json_encode(['status' => 'error', 'message' => 'Error deleting user: ' . $stmtSupervisor->error]);
+    $stmtSupervisor->close();
+    $conn->close();
+    exit;
+}
+
+//delete from students table
+$studentsql = "DELETE FROM students WHERE userID =?";
+$stmtStudent = $conn->prepare($studentsql);
+$stmtStudent->bind_param("i", $userId); // Use "i" for integer
+
+if (!$stmtStudent->execute()) {
+    echo json_encode(['status' => 'error', 'message' => 'Error deleting user: ' . $stmtStudent->error]);
+
+$stmtStudent->close();
+$conn->close();
+exit;
+}
+
+//delete from user table
 $sql = "DELETE FROM user WHERE userID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userId); // Use "i" for integer

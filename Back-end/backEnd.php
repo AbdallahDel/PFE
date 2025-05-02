@@ -9,25 +9,36 @@ session_start();  // Move this to the top
 
 
 //get Post data
-$userName = $_POST["userName"]??'';
+$loginInput = $_POST["loginInput"]??'';
 $Password = $_POST["Password"]??'';
 $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
 
 
 //validate input
-if (empty($userName) || empty($Password)){
+if (empty($loginInput) || empty($Password)){
     echo json_encode(['message' => 'All fields are required.']);
     exit ;
 }
 
+$sql = "SELECT user.*, students.matricule 
+        FROM user 
+        INNER JOIN students ON user.userID = students.userID 
+        WHERE students.matricule = ?";
 
 
-// search the username 
-$sql = "SELECT * FROM user WHERE userName = ?";
 $stmt = $conn ->prepare ($sql);
-$stmt ->bind_param("s",$userName);
+$stmt ->bind_param("s",$loginInput);
 $stmt ->execute();
 $result = $stmt->get_result();
+
+// fallback to username if no student match
+if ($result->num_rows === 0) {
+    $sql = "SELECT * FROM user WHERE userName = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $loginInput);
+    $stmt->execute();
+    $result = $stmt->get_result();
+}
 
 
 if ($result->num_rows >0){
@@ -40,9 +51,9 @@ if ($result->num_rows >0){
                         'success'=>true,
             ]);
         }
-        if ($user['Role']==='user') {
-            echo json_encode(['role'=>'user',
-                        'message'=>'user access',
+        if ($user['Role']==='student') {
+            echo json_encode(['role'=>'student',
+                        'message'=>'student access',
                         'success'=>true,
         ]);
         }
@@ -59,7 +70,7 @@ if ($result->num_rows >0){
     }
 }
 else {
-    echo json_encode (["success"=>false, "message"=>"invalid username"]);
+    echo json_encode (["success"=>false, "message"=>"invalid matricule"]);
 }
 
 

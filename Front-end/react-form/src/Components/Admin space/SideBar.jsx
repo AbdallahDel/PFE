@@ -16,37 +16,37 @@ export default function SideBar() {
                   ? 'text-white bg-indigo-500' 
                   : 'text-slate-600 hover:bg-indigo-50'
               }`}>
-                Manage Students
+                Manage users
               </div>
             </Link>
             
-            <Link to='/manageSupervisor'> 
+            <Link to='/manageStudent'>
+              <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
+                currentPath === '/manageStudent' 
+                  ? 'text-white bg-indigo-500' 
+                  : 'text-slate-600 hover:bg-indigo-50'
+              }`}>
+                Manage student
+              </div>
+            </Link>
+            
+            <Link to='/manageSupervisor'>
               <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
                 currentPath === '/manageSupervisor' 
                   ? 'text-white bg-indigo-500' 
                   : 'text-slate-600 hover:bg-indigo-50'
               }`}>
-                Manage supervisors
+                manage supervisors
               </div>
             </Link>
             
-            <Link to='/security'>
+            <Link to='/sujets'>
               <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
-                currentPath === '/security' 
+                currentPath === '/sujets' 
                   ? 'text-white bg-indigo-500' 
                   : 'text-slate-600 hover:bg-indigo-50'
               }`}>
-                Security
-              </div>
-            </Link>
-            
-            <Link to='/logs'>
-              <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
-                currentPath === '/logs' 
-                  ? 'text-white bg-indigo-500' 
-                  : 'text-slate-600 hover:bg-indigo-50'
-              }`}>
-                Logs
+                Sujets
               </div>
             </Link>
           </div>

@@ -1,0 +1,9 @@
+Array
+(
+    [userID] => 177
+    [userName] => admin
+    [Password] => $2y$10$pFN02MW6Y.b.tQwnuI8uCuRwszZs0BZ023QghSMq.rxVwi4rieZIW
+    [PhoneNumber] => 5
+    [Email] => 
+    [Role] => admin
+)

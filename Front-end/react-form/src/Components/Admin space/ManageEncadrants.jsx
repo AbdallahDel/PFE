@@ -5,8 +5,12 @@ import Dashboard from './Dashboard';
 import SideBar from './SideBar';
 import Header from './Header';
 import AddUser from './AddUser';
+import ImportButton from './ImportButton';
+import AddStudent from './AddStudent';
+import AddsupervisorPopup from './addSupervisor';
+ 
 
-const ManageUsers = (formData) => {
+const ManageUsers = (formData,) => {
   // Sample user data - replace with your actual data source
   const API_BASE_URL = 'http://localhost/PFE/Back-end';
 
@@ -15,40 +19,50 @@ const ManageUsers = (formData) => {
   const [EditedData, setEditedData] = useState({});
   const [EditingID, setEditingID] = useState(null);
   const [ShowAddUser,SetShowAddUser]= useState(false);
+  const [importedUser,setImportedUser]=useState([]);
+  
 
 
   
   useEffect(() => {
-    const getUsers = async () => {
-      const response = await fetch(`${API_BASE_URL}/manageUsers.php`, {
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Response data:', data); // Log the entire response
-        setUsers(Array.isArray(data) ? data : []);
-      }
-      else {
-        console.error(`HTTP error! Status: ${response.status}`);
-      }
-    }
-    getUsers();
-
+      const getUsers = async () => {
     
-  }, []);
+        try {
+          const response = await fetch('http://localhost/PFE/Back-end/manageSupervisors.php', {
+            credentials: 'include',
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+    
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Response data:', data);
+            setUsers(Array.isArray(data) ? data : []);
+          } else {
+            console.error(`HTTP error! Status: ${response.status}`);
+          }
+        } catch (error) {
+          console.error("Fetch error:", error);
+        }
+      };
+    
+      getUsers();
+    }, []);
 
   // Search functionality
   const [searchTerm, setSearchTerm] = useState('');
   
 
   const filteredUsers = users.filter(user => 
-    (user.userName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.Email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.Role?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.PhoneNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase()) 
+    (user.nom?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (user.prenom?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (user.Grade?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (user.userID?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (user.Email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) 
+
+
+
   );
 
   const handleDelete = async(userID) => {
@@ -88,7 +102,7 @@ const ManageUsers = (formData) => {
   const startEditing = (user) => {
     setEditingID(user.userID);
     setEditing(true);
-    setEditedData({...user});
+    setEditedData({...user, Role: 'supervisor'});  // Explicitly set the role
   };
 
   // Cancel editing
@@ -106,11 +120,11 @@ const ManageUsers = (formData) => {
     });
   };
 
-  // Save edited user
+  // Save edited student
   const saveUser = async() => {
     try {
       const response = await fetch(`${API_BASE_URL}/updateUser.php`, {
-        method: 'POST',
+        method: 'PUT',
         credentials: 'include',
         headers: {
           'Accept': 'application/json',
@@ -119,6 +133,7 @@ const ManageUsers = (formData) => {
         body: JSON.stringify(EditedData)
         
       });
+      console.log("edited data :",EditedData);
 
       if (response.ok){
         const data = await response.json();
@@ -146,12 +161,12 @@ const ManageUsers = (formData) => {
   };
 
 
-  //adding new user 
+  //adding new studnt  
   //////
   ////
   ///
   //
-  const handleAdding = async (userData) => {
+  const handleAdding = async (supervisorData) => {
     
     try {
     // Add further logic for form submission, e.g., API call
@@ -162,7 +177,7 @@ const ManageUsers = (formData) => {
         'Accept': 'application/json',
         'Content-Type': 'application/x-www-form-urlencoded' // Change this from 'application/json'
       },
-      body: new URLSearchParams(userData).toString() // Convert to form URL encoded format
+      body: new URLSearchParams(supervisorData).toString() // Convert to form URL encoded format
     });
     if (!response.ok){
         throw new Error(`HTTP error: ${response.status}`);
@@ -173,10 +188,13 @@ const ManageUsers = (formData) => {
     if (data.message ==='user added with success'){
       setUsers(prevUsers => [...prevUsers, {
         userID: data.userID,
-        userName: userData.userName,
-        Email: '', // Default value
-        PhoneNumber: '', // Default value
-        Role: userData.Role
+        nom: supervisorData.nom,
+        prenom:supervisorData.prenom,
+        Email: supervisorData.Email, // Default value
+        Grade:supervisorData.Grade,
+
+
+
     }]);        SetShowAddUser(false);
         
 
@@ -187,11 +205,58 @@ const ManageUsers = (formData) => {
 }catch (error){
     console.log('request error :'+ error.message);
 }
-//emplty the iputs
-
-
-
 };
+
+////////////////////
+///import supervisor
+const handleImportedUsers = async (importedData) => {
+  console.log("Data received in parent:", importedData);
+  
+  // Add default role to imported users if needed
+  const importedUserData = importedData.map(user => ({
+    ...user,
+    Role: 'supervisor', // or 'supervisor' or any default value
+    Grade: user.Grade ,// Map 'level' from the imported data to 'niveau'
+    Email : user.Email, // Ensure Email is included
+    
+  }));
+  
+  try {
+    // API call to save the imported users
+    const response = await fetch(`${API_BASE_URL}/ImportedData.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(importedUserData)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    console.log(result);
+    
+    if (result.message === 'imported user/s saved with success') {
+      // Update the local state with the new users
+      setUsers(prevUsers => [...prevUsers, ...importedUserData]);
+      //console.log('the new table:',[...users, ...importedUserData].map(user=>user.userName));
+      alert("Import successful!");
+    } else {
+      console.log('Error: ' + result.message);
+      alert("Impor failed");
+
+    }
+  } catch (error) {
+    console.log('Request error: ' + error.message);
+  }
+};
+
+
+
+
 
   return (
     <div className="flex flex-col h-screen">
@@ -202,13 +267,16 @@ const ManageUsers = (formData) => {
           <div className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-800 flex items-center">
               <Users className="mr-2" size={24} />
-              Manage Users
+              Manage Supervisors
             </h1>
+
+            <ImportButton onImport={handleImportedUsers} userRole="supervisor" />
+
             <button onClick={()=>SetShowAddUser(true) } className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
               <UserPlus size={16} className="mr-2" />
-              Add New User
+              Add New Supervisor
             </button>
-            {ShowAddUser && <AddUser onAddUser={handleAdding} onClose={()=>SetShowAddUser(false)} />}
+            {ShowAddUser && <AddsupervisorPopup onAddsupervisor={handleAdding} onClose={()=>SetShowAddUser(false)} />}
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
@@ -227,118 +295,113 @@ const ManageUsers = (formData) => {
             </div>
 
             {/* Users Table */}
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Phone Number
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredUsers.map((user) => (
-                    <tr key={user.userID} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {EditingID === user.userID ? (
-                          <input 
-                            className="w-full px-2 py-1 border border-gray-300 rounded-md" 
-                            value={EditedData.userName || ''} 
-                            onChange={(e) => handleInputChange(e, 'userName')} 
-                          />
-                        ) : (
-                          <span className="font-medium text-gray-900">{user.userName}</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {EditingID === user.userID ? (
-                          <input 
-                            className="w-full px-2 py-1 border border-gray-300 rounded-md" 
-                            value={EditedData.Email || ''} 
-                            onChange={(e) => handleInputChange(e, 'Email')} 
-                          />
-                        ) : (
-                          <span className="text-gray-500">{user.Email}</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {EditingID === user.userID ? (
-                          <input 
-                            className="w-full px-2 py-1 border border-gray-300 rounded-md" 
-                            value={EditedData.PhoneNumber || ''} 
-                            onChange={(e) => handleInputChange(e, 'PhoneNumber')} 
-                          />
-                        ) : (
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.PhoneNumber === 'Active' ? 'bg-green-100 text-green-800' : 'text-gray-500'
-                          }`}>
-                            {user.PhoneNumber}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {EditingID === user.userID ? (
-                          <select 
-                            className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                            value={EditedData.Role || ''}
-                            onChange={(e) => handleInputChange(e, 'Role')}
-                          >
-                            <option value="admin">admin</option>
-                            <option value="user">User</option>
-                            <option value="supervisor">supervisor</option>
+            {/* Users Table */}
+<div className="overflow-x-auto">
+  <table className="min-w-full divide-y divide-gray-200">
+    <thead className="bg-gray-50">
+      <tr>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Email
+        </th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Nom
+        </th>
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Prenom
+        </th>
+        
+        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Grade
+        </th>
+        <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody className="bg-white divide-y divide-gray-200">
+      {filteredUsers.map((user) => (
+        <tr key={user.userID} className="hover:bg-gray-50">
+          <td className="px-6 py-4 whitespace-nowrap">
+            {EditingID === user.userID ? (
+              <input 
+                className="w-full px-2 py-1 border border-gray-300 rounded-md" 
+                value={EditedData.Email || ''} 
+                onChange={(e) => handleInputChange(e, 'Email')} 
+              />
+            ) : (
+              <span className="font-medium text-gray-900">{user.Email}</span>
+            )}
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            {EditingID === user.userID ? (
+              <input 
+                className="w-full px-2 py-1 border border-gray-300 rounded-md" 
+                value={EditedData.nom || ''} 
+                onChange={(e) => handleInputChange(e, 'nom')} 
+              />
+            ) : (
+              <span className="text-gray-500">{user.nom}</span>
+            )}
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            {EditingID === user.userID ? (
+              <input 
+                className="w-full px-2 py-1 border border-gray-300 rounded-md" 
+                value={EditedData.prenom || ''} 
+                onChange={(e) => handleInputChange(e, 'prenom')} 
+              />
+            ) : (
+              <span className="text-gray-500">{user.prenom}</span>
+            )}
+          </td>
+        
+          <td className="px-6 py-4 whitespace-nowrap">
+            {EditingID === user.userID ? (
+              <input
+                className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                value={EditedData.Grade || ''}
+                onChange={(e) => handleInputChange(e, 'Grade')}
+              />
+                
+            ) : (
+              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                user.niveau === 'master' ? 'bg-purple-100 text-purple-800' : 
+                'bg-blue-100 text-blue-800'
+              }`}>
+                {user.Grade}
+              </span>
+            )}
+          </td>
 
-                          </select>
-                        ) : (
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.Role === 'admin' ? 'bg-purple-100 text-green-800' : 
-                            user.Role === 'user' ? 'bg-blue-100 text-blue-800' : 
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {user.Role}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end space-x-2">
-                          {EditingID === user.userID ? (
-                            <>
-                              <button onClick={saveUser} className="text-green-600 hover:text-green-900">
-                                <Save size={16} />
-                              </button>
-                              <button onClick={cancelEditing} className="text-red-600 hover:text-red-900">
-                                <X size={16} />
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button onClick={() => startEditing(user)} className="text-blue-600 hover:text-blue-900">
-                                <Edit size={16} />
-                              </button>
-                              <button onClick={() => handleDelete(user.userID)} className="text-red-600 hover:text-red-900">
-                                <Trash2 size={16} />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {/* Actions Column */}
+          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <div className="flex items-center justify-end space-x-2">
+              {EditingID === user.userID ? (
+                <>
+                  <button onClick={saveUser} className="text-green-600 hover:text-green-900">
+                    <Save size={16} />
+                  </button>
+                  <button onClick={cancelEditing} className="text-red-600 hover:text-red-900">
+                    <X size={16} />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => startEditing(user)} className="text-blue-600 hover:text-blue-900">
+                    <Edit size={16} />
+                  </button>
+                  <button onClick={() => handleDelete(user.userID)} className="text-red-600 hover:text-red-900">
+                    <Trash2 size={16} />
+                  </button>
+                </>
+              )}
             </div>
-            
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
             {/* Pagination - Simple Version */}
             <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
               <div className="flex flex-1 justify-between sm:hidden">

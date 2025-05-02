@@ -10,7 +10,7 @@ function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [role,setRole]= useState('user');
+    const [role,setRole]= useState('student');
     
 
    

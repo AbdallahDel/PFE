@@ -27,10 +27,10 @@ if ($result->num_rows >0){
         echo json_encode(['role'=>'admin',
                             'status'=>'success',
                             'message'=>'admin logged in']);}
-    if($user['Role']==='user'){
-                        echo json_encode(['role'=>'user',
+    if($user['Role']==='student'){
+                        echo json_encode(['role'=>'student',
                         'status'=>'success',
-                        'message'=>'user logged in']);
+                        'message'=>'student logged in']);
                     }
     if($user['Role']==='supervisor'){
                         echo json_encode(['role'=>'supervisor',
