@@ -50,21 +50,21 @@ const ManageUsers = (formData,) => {
     }, []);
 
   // Search functionality
-  const [searchTerm, setSearchTerm] = useState('');
-  
+  // Search functionality
+const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredUsers = users.filter(user => 
-    (user.nom?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.prenom?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.niveau?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.matricule?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.binome_id?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.userID?.toLowerCase() || '').includes(searchTerm.toLowerCase()) 
+const filteredUsers = users.filter(user => 
+  (user.nom?.toLowerCase()        || '').includes(searchTerm.toLowerCase()) ||
+  (user.prenom?.toLowerCase()     || '').includes(searchTerm.toLowerCase()) ||
+  (user.email?.toLowerCase()      || '').includes(searchTerm.toLowerCase()) ||
+  (user.niveau?.toLowerCase()     || '').includes(searchTerm.toLowerCase()) ||
+  (user.matricule?.toLowerCase()  || '').includes(searchTerm.toLowerCase()) ||
+  // Coerce binome_id to string before toLowerCase()
+  String(user.binome_id || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  // Coerce userID to string before toLowerCase()
+  String(user.userID   || '').toLowerCase().includes(searchTerm.toLowerCase())
+);
 
-
-
-  );
 
   const handleDelete = async(userID) => {
     const confirmed = window.confirm("Are you sure you want to delete this user?");
@@ -169,45 +169,43 @@ const ManageUsers = (formData,) => {
   const handleAdding = async (studentData) => {
     
     try {
-    // Add further logic for form submission, e.g., API call
-    const response = await  fetch (`${API_BASE_URL}/addUser.php`,{
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded' // Change this from 'application/json'
-      },
-      body: new URLSearchParams(studentData).toString() // Convert to form URL encoded format
-    });
-    if (!response.ok){
+      const response = await fetch(`${API_BASE_URL}/addUser.php`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams(studentData).toString()
+      });
+
+      if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
-    
-    }
-    const data = await  response.json();
-    console.log(data);
-    if (data.message ==='user added with success'){
-      setUsers(prevUsers => [...prevUsers, {
-        userID: data.userID,
-        matricule:studentData.matricule,
-        nom: studentData.nom,
-        prenom:studentData.prenom,
-        Email: '', // Default value
-        niveau:studentData.niveau,
-        equipeID:studentData.equipeID,
+      }
 
+      const data = await response.json();
+      console.log(data);
 
-
-    }]);        SetShowAddUser(false);
+      if (data.message === 'user added with success') {
+        setUsers(prevUsers => [...prevUsers, {
+          userID: data.userID,
+          matricule: studentData.matricule,
+          nom: studentData.nom,
+          prenom: studentData.prenom,
+          Email: '',
+          niveau: studentData.niveau,
+          equipeID: studentData.equipeID,
+        }]);
         
-
-    }
-    else {
+        // Close the form immediately after successful addition
+        SetShowAddUser(false);
+      } else {
         console.log('Error: ' + data.message);
+      }
+    } catch (error) {
+      console.log('request error :' + error.message);
     }
-}catch (error){
-    console.log('request error :'+ error.message);
-}
-};
+  };
 
 ////////////////////
 ///import student
@@ -272,8 +270,7 @@ const handleImportedUsers = async (importedData) => {
               Manage Students
             </h1>
 
-            <ImportButton onImport={handleImportedUsers} />
-
+            <ImportButton onImport={handleImportedUsers} userRole="student" />
             <button onClick={()=>SetShowAddUser(true) } className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
               <UserPlus size={16} className="mr-2" />
               Add New Student

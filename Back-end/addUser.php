@@ -82,7 +82,7 @@ try {
 
     // This is a supervisor addition request
         //
-    } if($isSupervisorRequest){
+    } elseif($isSupervisorRequest){
         
         // Get supervisor-specific fields
         $Email = $_POST["Email"] ?? '';

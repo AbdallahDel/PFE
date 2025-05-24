@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
-const PrivateRoute = ({ children, adminOnly = false }) => {
+const PrivateRoute = ({ children, adminOnly = false, supervisorOnly = false }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isStudent,setIsStudent]=useState(false);
-  const[isSupervisor,setIsSupervisor]=useState(false);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -17,19 +15,15 @@ const PrivateRoute = ({ children, adminOnly = false }) => {
             'Accept': 'application/json'
           }
         });
-
         if (response.ok) {
           const data = await response.json();
-          console.log('Server response:', data); 
+          console.log('Server response:', data);
+          
           setIsAuth(data.status === 'success');
-          setIsAdmin(data.role === 'admin');
-          setIsStudent(data.role === 'student');
-          setIsSupervisor(data.role === 'supervisor');
-        
+          setRole(data.role);
         } else {
           console.error(`HTTP error! Status: ${response.status}`);
           setIsAuth(false);
-          
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
@@ -38,26 +32,45 @@ const PrivateRoute = ({ children, adminOnly = false }) => {
         setIsLoading(false);
       }
     };
-
-    checkAuth();
     
+    checkAuth();
   }, []);
 
   if (isLoading) {
     return <div>Loading...</div>; // Or a proper loading spinner component
   }
-  if (isStudent && adminOnly) {
-    return <Navigate to="/Home" replace />;
-  }
-  if (adminOnly && isSupervisor ) {
-    return <Navigate to="/supervisorHome" replace />;
-  }
-  if (!adminOnly && isAdmin) {
-    return <Navigate to="/Admin" replace />;
-  }
-  
 
-  return isAuth  ? children : <Navigate to="/" replace />;
+  // Not authenticated - redirect to login
+  if (!isAuth) {
+    return <Navigate to="/" />;
+  }
+
+  // Route access logic based on roles
+  if (adminOnly && role !== 'admin') {
+    return <Navigate to="/Home" />;
+  }
+
+  if (supervisorOnly && role !== 'supervisor') {
+    return <Navigate to="/Home" />;
+  }
+
+  // Student can only access student routes
+  if (role === 'student' && (adminOnly || supervisorOnly)) {
+    return <Navigate to="/Home" />;
+  }
+
+  // Admin can only access admin routes
+  if (role === 'admin' && !adminOnly) {
+    return <Navigate to="/Admin" />;
+  }
+
+  // Supervisor can only access supervisor routes
+  if (role === 'supervisor' && !supervisorOnly) {
+    return <Navigate to="/SupervisorHome" />;
+  }
+
+  // All checks passed, render the protected component
+  return children;
 };
 
 export default PrivateRoute;

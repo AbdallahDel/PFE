@@ -1,9 +1,11 @@
 Array
 (
-    [userID] => 177
-    [userName] => admin
-    [Password] => $2y$10$pFN02MW6Y.b.tQwnuI8uCuRwszZs0BZ023QghSMq.rxVwi4rieZIW
-    [PhoneNumber] => 5
-    [Email] => 
-    [Role] => admin
+    [userID] => 400
+    [nom] => b
+    [prenom] => b
+    [email] => 
+    [matricule] => 8
+    [niveau] => licence
+    [binome_id] => 4
+    [Role] => student
 )

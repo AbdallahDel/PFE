@@ -1,53 +1,80 @@
-import React, { useState } from 'react';
-import { 
-  User, 
-  Home, 
-  FileText, 
-  Users, 
-  Calendar, 
-  Settings, 
-  LogOut
-} from 'lucide-react';
-import SupervisorSideBar from './SupervisorSideBar';
+import React, { useState, useEffect } from 'react';
+import { User } from 'lucide-react';
 import SupervisorHeader from './SupervisorHeader';
+import SupervisorSideBar from './supervisorSideBar';
 
 export default function SupervisorDashboard() {
+  const [supervisorData, setSupervisorData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchSupervisorData();
+  }, []);
+
+  const fetchSupervisorData = async () => {
+    try {
+      const response = await fetch('http://localhost/PFE/Back-end/supervisorProfile.php', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        setSupervisorData(data.supervisor);
+      } else {
+        throw new Error(data.message || 'Failed to load supervisor data');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-16">
+        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-sm">
+        Error loading supervisor data
+      </div>
+    );
+  }
+  const navigateTo = (path) => {
+    console.log('Navigating to:', path);
+    // You can use react-router-dom's useNavigate if needed
+  };
   
+
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <SupervisorHeader/>            
       <div className="flex flex-1">
-        <SupervisorSideBar/>
+        <SupervisorSideBar navigateTo={navigateTo}/>
         {/* Main content */}
-        <main className="flex-1 p-4">
-          <div className="bg-white shadow rounded p-4 mb-4">
-            <h2 className="text-lg font-medium text-gray-800">Welcome to Supervisor System</h2>
-            <p className="text-gray-600">Use the sidebar to navigate through different sections</p>
-          </div>
-          
-          {/* Simple profile card */}
-          <div className="bg-white shadow rounded p-4">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold mr-3">
-                SV
-              </div>
-              <div>
-                <h3 className="font-medium">Supervisor Name</h3>
-                <p className="text-sm text-gray-500">Department</p>
-              </div>
-            </div>
-            <button
-              onClick={() => navigateTo('/supervisor-profile')}
-              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded text-sm"
-            >
-              View Profile
-            </button>
-          </div>
-        </main>
+        <main className="flex-1 p-6">
+        <div className="bg-white rounded-lg shadow p-4">
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-lg font-bold text-blue-700">
+          {supervisorData?.prenom?.charAt(0)}{supervisorData?.nom?.charAt(0)}
+        </div>
+        <div>
+          <h2 className="text-lg font-medium">{supervisorData?.prenom} {supervisorData?.nom}</h2>
+          <p className="text-gray-600 text-sm">{supervisorData?.grade}</p>
+        </div>
       </div>
-      
-      {/* Logout confirmation modal */}
-      
+    </div>
+       </main>
+      </div>
     </div>
   );
 }

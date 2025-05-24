@@ -27,17 +27,22 @@ export default function Header() {
 
   return (
     <div>
-
-<div className="bg-indigo-600 px-4 py-3 flex items-center justify-between">
-        <div className="text-lg text-white">ADMIN SPACE</div>
+      <div className="bg-indigo-600 px-4 py-3 flex items-center justify-between">
+        <button 
+          onClick={() => navigate('/Admin')} 
+          className="text-lg text-white hover:text-gray-200 transition-colors duration-200 focus:outline-none"
+        >
+          ADMIN SPACE
+        </button>
         <div className="flex items-center space-x-4">
-          
-          <button className="flex items-center gap-2 px-4 py-2 text-white bg-red-800 rounded-lg hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
- onClick={handleLoggedOut}>Logout</button>
-
+          <button 
+            className="flex items-center gap-2 px-4 py-2 text-white bg-red-800 rounded-lg hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            onClick={handleLoggedOut}
+          >
+            Logout
+          </button>
         </div>
       </div>
-
     </div>
   )
 }

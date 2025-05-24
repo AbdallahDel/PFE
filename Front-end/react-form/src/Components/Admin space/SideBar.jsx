@@ -10,6 +10,15 @@ export default function SideBar() {
       <div className="w-48 bg-white border-r">
         <div className="p-4">
           <div className="space-y-2">
+            <Link to='/AdminProfile'>
+              <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
+                currentPath === '/AdminProfile' 
+                  ? 'text-white bg-indigo-500' 
+                  : 'text-slate-600 hover:bg-indigo-50'
+              }`}>
+                Profile
+              </div>
+            </Link>
             <Link to='/manageUsers'>
               <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
                 currentPath === '/manageUsers' 
@@ -49,6 +58,7 @@ export default function SideBar() {
                 Sujets
               </div>
             </Link>
+            
           </div>
         </div>
       </div>

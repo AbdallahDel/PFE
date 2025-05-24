@@ -33,7 +33,7 @@ export default function AddStudentPopup({onClose, onAddStudent}) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-md shadow-lg w-80">
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-medium">Add New Student</h2>
+          <h2 className="text-lg font-medium">Add New Student</h2>z
           <button 
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"

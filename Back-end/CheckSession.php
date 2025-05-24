@@ -13,6 +13,8 @@ session_start();  // Move this to the top
 
 
 
+
+
 // cherchee the username 
 $sql = "SELECT * FROM user WHERE userID = ?";
 $stmt = $conn ->prepare ($sql);

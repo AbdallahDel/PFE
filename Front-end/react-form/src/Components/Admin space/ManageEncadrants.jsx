@@ -51,19 +51,19 @@ const ManageUsers = (formData,) => {
     }, []);
 
   // Search functionality
-  const [searchTerm, setSearchTerm] = useState('');
-  
+  // Search functionality
+const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredUsers = users.filter(user => 
-    (user.nom?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.prenom?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.Grade?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.userID?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.Email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) 
+const filteredUsers = users.filter(user => 
+  (user.nom?.toLowerCase()     || '').includes(searchTerm.toLowerCase()) ||
+  (user.prenom?.toLowerCase()  || '').includes(searchTerm.toLowerCase()) ||
+  (user.Email?.toLowerCase()   || '').includes(searchTerm.toLowerCase()) ||
+  // Coerce Grade to string before calling toLowerCase()
+  String(user.Grade || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  // Coerce userID to string before calling toLowerCase()
+  String(user.userID || '').toLowerCase().includes(searchTerm.toLowerCase())
+);
 
-
-
-  );
 
   const handleDelete = async(userID) => {
     const confirmed = window.confirm("Are you sure you want to delete this user?");

@@ -54,11 +54,11 @@ const ManageUsers = (formData) => {
   
 
   const filteredUsers = users.filter(user => 
-    (user.userName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.Email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.Role?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.PhoneNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase()) 
-  );
+  (user.userName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (user.Email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (user.Role || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+`${user.PhoneNumber || ''}`.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   const handleDelete = async(userID) => {
     const confirmed = window.confirm("Are you sure you want to delete this user?");
