@@ -6,7 +6,7 @@ import AddSujet from './AddSujet';
 
 const ManageSujets = () => {
   // API base URL
-  const API_BASE_URL = 'http://localhost/PFE/Back-end';
+  const API_BASE_URL = 'http://localhost:8000';
 
   // State management
   const [sujets, setSujets] = useState([]);

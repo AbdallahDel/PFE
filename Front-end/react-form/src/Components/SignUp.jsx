@@ -29,7 +29,7 @@ function Signup() {
 
         try {
         // Add further logic for form submission, e.g., API call
-        const response = await  fetch ('http://localhost/PFE/Back-end/SignUp.php',{
+        const response = await  fetch ('http://localhost:8000/SignUp.php',{
             method :'POST' ,
             body :formData,
         });

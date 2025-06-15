@@ -23,7 +23,7 @@ function SupervisorHeader() {
   
   const confirmLogout = async () => {
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/logOut.php', {
+      const response = await fetch('http://localhost:8000/logOut.php', {
         method: 'POST',
         credentials: 'include',
       });

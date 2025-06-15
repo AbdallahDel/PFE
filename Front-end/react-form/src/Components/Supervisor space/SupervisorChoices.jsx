@@ -15,7 +15,7 @@ export default function ProjectRequests() {
     setError(null);
     
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getSupervisorProjectRequests.php', {
+      const response = await fetch('http://localhost:8000/getSupervisorProjectRequests.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -87,7 +87,7 @@ export default function ProjectRequests() {
     }
     
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/acceptProjectRequest.php', {
+      const response = await fetch('http://localhost:8000/acceptProjectRequest.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ export default function ProjectRequests() {
     }
     
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/rejectProjectRequest.php', {
+      const response = await fetch('http://localhost:8000/rejectProjectRequest.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

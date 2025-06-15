@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./Front-end/react-form
+    ports:
+      - "3000:3000"  # Changed from 5173 to 3000
+    volumes:
+      - ./Front-end/react-form:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run dev -- --host --port 3000  # Specify port 3000 explicitly
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./Back-end
+    ports:
+      - "8000:80"
+    volumes:
+      - ./Back-end:/var/www/html
+    environment:
+      - DOCKER_ENV=true
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: testform
+      MYSQL_ROOT_HOST: "%"
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+    depends_on:
+      - db
+
+volumes:
+  db_data:

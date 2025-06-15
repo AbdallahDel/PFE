@@ -16,7 +16,7 @@ export default function MyProjects() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getSupervisorAsignedProjects.php', {
+      const response = await fetch('http://localhost:8000/getSupervisorAsignedProjects.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -39,7 +39,7 @@ export default function MyProjects() {
 
   const handleDownloadFile = (filePath) => {
     if (filePath) {
-      window.open(`http://localhost/PFE/Back-end/${filePath}`, '_blank');
+      window.open(`http://localhost:8000/${filePath}`, '_blank');
     } else {
       alert('Aucun fichier disponible pour ce projet.');
     }

@@ -30,7 +30,7 @@ export default function SupervisorPasswordChange() {
       formData.append('oldPassword', oldPassword);
       formData.append('newPassword', newPassword);
       
-      const response = await fetch('http://localhost/PFE/Back-end/ChangePassword.php', {
+      const response = await fetch('http://localhost:8000/ChangePassword.php', {
         method: 'POST',
         credentials: 'include',
         body: formData

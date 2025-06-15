@@ -9,7 +9,7 @@ const PrivateRoute = ({ children, adminOnly = false, supervisorOnly = false }) =
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('http://localhost/PFE/Back-end/CheckSession.php', {
+        const response = await fetch('http://localhost:8000/CheckSession.php', {
           credentials: 'include',
           headers: {
             'Accept': 'application/json'

@@ -11,7 +11,7 @@ export default function Home() {
   useEffect(() => {
     const getUserInfo = async () => {
       try {
-        const response = await fetch('http://localhost/PFE/Back-end/GetUserInfo.php', {
+        const response = await fetch('http://localhost:8000/GetUserInfo.php', {
           credentials: 'include',
           headers: {
             'Accept': 'application/json'
@@ -41,7 +41,7 @@ export default function Home() {
     if (!confirmed) return;
     
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/logOut.php', {
+      const response = await fetch('http://localhost:8000/logOut.php', {
         method: 'POST',
         credentials: 'include',
       });

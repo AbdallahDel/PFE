@@ -73,7 +73,7 @@ const DeposerSujet = ({ onClose, onSuccess }) => {
         formDataObj.append('pdfFile', file);
       }
 
-      const response = await fetch('http://localhost/PFE/Back-end/deposerSujet.php', {
+      const response = await fetch('http://localhost:8000/deposerSujet.php', {
         method: 'POST',
         credentials: 'include',
         body: formDataObj

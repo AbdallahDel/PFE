@@ -1,11 +1,11 @@
 Array
 (
-    [userID] => 400
-    [nom] => b
-    [prenom] => b
+    [userID] => 413
+    [nom] => abdalla
+    [prenom] => delhoum
     [email] => 
-    [matricule] => 8
+    [matricule] => 1111
     [niveau] => licence
-    [binome_id] => 4
+    [binome_id] => 5
     [Role] => student
 )

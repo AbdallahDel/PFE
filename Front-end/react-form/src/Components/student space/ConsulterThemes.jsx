@@ -21,7 +21,7 @@ export default function ConsulterThemes() {
     setError(null);
     
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getInternSujets.php', {
+      const response = await fetch('http://localhost:8000/getInternSujets.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -63,7 +63,7 @@ export default function ConsulterThemes() {
   // Fetch user's submitted choices
   const fetchUserChoices = async () => {
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getUserChoices.php', {
+      const response = await fetch('http://localhost:8000/getUserChoices.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -90,7 +90,7 @@ export default function ConsulterThemes() {
   // Fetch data about already selected projects
   const fetchAlreadySelectedProjects = async () => {
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getAlreadySelectedProjects.php', {
+      const response = await fetch('http://localhost:8000/getAlreadySelectedProjects.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -136,7 +136,7 @@ export default function ConsulterThemes() {
   // Handle view file (PDF)
   const handleViewFile = (filePath) => {
     if (filePath && filePath.toLowerCase() !== 'null') {
-      window.open(`http://localhost/PFE/Back-end/${filePath}`, '_blank');
+      window.open(`http://localhost:8000/${filePath}`, '_blank');
     } else {
       alert('Aucun fichier disponible pour ce thème.');
     }
@@ -181,7 +181,7 @@ export default function ConsulterThemes() {
     setSubmitting(true);
     
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/submitThemeChoices.php', {
+      const response = await fetch('http://localhost:8000/submitThemeChoices.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ export default function Profile() {
   useEffect(() => {
     const getStudentInfo = async () => {
       try {
-        const response = await fetch('http://localhost/PFE/Back-end/GetuserInfo.php', {
+        const response = await fetch('http://localhost:8000/GetuserInfo.php', {
           credentials: 'include',
           headers: {
             'Accept': 'application/json'
@@ -66,7 +66,7 @@ export default function Profile() {
       formData.append('oldPassword', oldPassword);
       formData.append('newPassword', newPassword);
       
-      const response = await fetch('http://localhost/PFE/Back-end/ChangePassword.php', {
+      const response = await fetch('http://localhost:8000/ChangePassword.php', {
         method: 'POST',
         credentials: 'include',
         body: formData

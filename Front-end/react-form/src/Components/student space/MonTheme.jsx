@@ -17,7 +17,7 @@ export default function MonTheme() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getMonTheme.php', {
+      const response = await fetch('http://localhost:8000/getMonTheme.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -41,7 +41,7 @@ export default function MonTheme() {
 
   const handleDownloadFile = () => {
     if (projectData && projectData.file_path) {
-      window.open(`http://localhost/PFE/Back-end/${projectData.file_path}`, '_blank');
+      window.open(`http://localhost:8000/${projectData.file_path}`, '_blank');
     } else {
       alert('Aucun fichier disponible pour ce thème.');
     }

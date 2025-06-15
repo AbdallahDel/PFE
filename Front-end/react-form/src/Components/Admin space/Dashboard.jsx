@@ -1,3 +1,4 @@
+// Dashboard.js
 import React, { useState, useEffect } from 'react';
 import { Users, Settings, Bell, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -10,7 +11,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTotalUsers = async () => {
       try {
-        const response = await fetch('http://localhost/PFE/Back-end/totaleUsers.php', {
+        const response = await fetch('http://localhost:8000/totaleUsers.php', {
           method: 'GET',
           headers: {
             'Accept': 'application/json'
@@ -42,7 +43,7 @@ const Dashboard = () => {
         <div className="flex-1 p-6">
           {/* Search Bar */}
           <div className="flex items-center space-x-2 mb-6">
-            <div className="flex items-center w-64 px-3 py-2 bg-white border rounded hover:border-indigo-400 focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 transition-colors">
+            <div className="flex items-center w-64 px-3 py-2 bg-white border rounded hover:border-gray-400 focus-within:border-gray-400 focus-within:ring-1 focus-within:ring-gray-400 transition-colors">
               <Search className="h-4 w-4 text-slate-400" />
               <input 
                 className="bg-transparent outline-none text-sm w-full ml-2" 
@@ -53,18 +54,18 @@ const Dashboard = () => {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-emerald-500 p-4 rounded-lg text-white">
-              <div className="text-xs text-emerald-100 mb-1">TOTAL USERS</div>
+            <div className="bg-gray-700 p-4 rounded-lg text-white">
+              <div className="text-xs text-gray-300 mb-1">TOTAL USERS</div>
               <div className="text-2xl ">
                 {totalUsers !== null ? totalUsers.toLocaleString() : '...'}
               </div>
             </div>
-            <div className="bg-blue-500 p-4 rounded-lg text-white">
-              <div className="text-xs text-blue-100 mb-1">ACTIVE SESSIONS</div>
+            <div className="bg-gray-600 p-4 rounded-lg text-white">
+              <div className="text-xs text-gray-300 mb-1">ACTIVE SESSIONS</div>
               <div className="text-2xl">56</div>
             </div>
-            <div className="bg-violet-500 p-4 rounded-lg text-white">
-              <div className="text-xs text-violet-100 mb-1">SYSTEM STATUS</div>
+            <div className="bg-gray-800 p-4 rounded-lg text-white">
+              <div className="text-xs text-gray-300 mb-1">SYSTEM STATUS</div>
               <div className="text-2xl">OK</div>
             </div>
           </div>

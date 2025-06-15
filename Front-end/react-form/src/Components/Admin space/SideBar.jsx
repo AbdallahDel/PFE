@@ -13,8 +13,8 @@ export default function SideBar() {
             <Link to='/AdminProfile'>
               <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
                 currentPath === '/AdminProfile' 
-                  ? 'text-white bg-indigo-500' 
-                  : 'text-slate-600 hover:bg-indigo-50'
+                  ? 'text-white bg-gray-700' 
+                  : 'text-slate-600 hover:bg-gray-50'
               }`}>
                 Profile
               </div>
@@ -22,8 +22,8 @@ export default function SideBar() {
             <Link to='/manageUsers'>
               <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
                 currentPath === '/manageUsers' 
-                  ? 'text-white bg-indigo-500' 
-                  : 'text-slate-600 hover:bg-indigo-50'
+                  ? 'text-white bg-gray-700' 
+                  : 'text-slate-600 hover:bg-gray-50'
               }`}>
                 Manage users
               </div>
@@ -32,8 +32,8 @@ export default function SideBar() {
             <Link to='/manageStudent'>
               <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
                 currentPath === '/manageStudent' 
-                  ? 'text-white bg-indigo-500' 
-                  : 'text-slate-600 hover:bg-indigo-50'
+                  ? 'text-white bg-gray-700' 
+                  : 'text-slate-600 hover:bg-gray-50'
               }`}>
                 Manage student
               </div>
@@ -42,8 +42,8 @@ export default function SideBar() {
             <Link to='/manageSupervisor'>
               <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
                 currentPath === '/manageSupervisor' 
-                  ? 'text-white bg-indigo-500' 
-                  : 'text-slate-600 hover:bg-indigo-50'
+                  ? 'text-white bg-gray-700' 
+                  : 'text-slate-600 hover:bg-gray-50'
               }`}>
                 manage supervisors
               </div>
@@ -52,8 +52,8 @@ export default function SideBar() {
             <Link to='/sujets'>
               <div className={`px-3 py-2 text-sm rounded cursor-pointer transition-colors ${
                 currentPath === '/sujets' 
-                  ? 'text-white bg-indigo-500' 
-                  : 'text-slate-600 hover:bg-indigo-50'
+                  ? 'text-white bg-gray-700' 
+                  : 'text-slate-600 hover:bg-gray-50'
               }`}>
                 Sujets
               </div>

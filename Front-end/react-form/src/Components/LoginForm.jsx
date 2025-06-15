@@ -7,7 +7,7 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showInfo, setShowInfo] = useState(false);
-  const API_BASE_URL = 'http://localhost/PFE/Back-end';
+  const API_BASE_URL = 'http://localhost:8000';
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -85,7 +85,7 @@ try {
     } elseif($isSupervisorRequest){
         
         // Get supervisor-specific fields
-        $Email = $_POST["Email"] ?? '';
+        $Email = $_POST["Email"] ?? 'NULL';
         $prenom = $_POST["prenom"] ?? '';
         $nom = $_POST["nom"] ?? '';
         $Grade = $_POST["Grade"] ?? '';

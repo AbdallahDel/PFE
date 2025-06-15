@@ -11,7 +11,7 @@ import AddStudent from './AddStudent';
 
 const ManageUsers = (formData,) => {
   // Sample user data - replace with your actual data source
-  const API_BASE_URL = 'http://localhost/PFE/Back-end';
+  const API_BASE_URL = 'http://localhost:8000';
 
   const [users, setUsers] = useState([]); 
   const [Editing, setEditing] = useState(false);
@@ -27,7 +27,7 @@ const ManageUsers = (formData,) => {
       const getUsers = async () => {
     
         try {
-          const response = await fetch('http://localhost/PFE/Back-end/manageStudents.php', {
+          const response = await fetch('http://localhost:8000/manageStudents.php', {
             credentials: 'include',
             headers: {
               'Accept': 'application/json'

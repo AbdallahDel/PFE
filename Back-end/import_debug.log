@@ -158,3 +158,171 @@ Successfully added supervisor: abdallah@gmil.com
 Successfully added supervisor: abdalla@gmil.com
 Successfully added supervisor: abdall@gmil.com
 Successfully added supervisor: abdal@gmil.com
+Received data: Array
+(
+    [0] => Array
+        (
+            [Role] => student
+            [matricule] => 1111
+            [nom] => abdallah
+            [prenom] => delhoum
+            [level] => assistant a
+            [binome_id] => 5
+            [Password] => abdallah
+            [niveau] => assistant a
+        )
+
+    [1] => Array
+        (
+            [Role] => student
+            [matricule] => 2222
+            [nom] => besis
+            [prenom] => houcine
+            [level] => asistant b
+            [binome_id] => 5
+            [Password] => besis
+            [niveau] => asistant b
+        )
+
+    [2] => Array
+        (
+            [Role] => student
+            [matricule] => 3333
+            [nom] => anis
+            [prenom] => chbab
+            [level] => prof de cour
+            [binome_id] => 2
+            [Password] => anis
+            [niveau] => prof de cour
+        )
+
+    [3] => Array
+        (
+            [Role] => student
+            [matricule] => 4444
+            [nom] => alhaq
+            [prenom] => diaa
+            [level] => prof de td
+            [binome_id] => 2
+            [Password] => diaa
+            [niveau] => prof de td
+        )
+
+)
+
+Successfully added student: 1111
+Successfully added student: 2222
+Successfully added student: 3333
+Successfully added student: 4444
+Received data: Array
+(
+    [0] => Array
+        (
+            [Role] => student
+            [matricule] => 1111
+            [nom] => abdallah
+            [prenom] => delhoum
+            [level] => assistant a
+            [binome_id] => 5
+            [Password] => abdallah
+            [niveau] => assistant a
+        )
+
+    [1] => Array
+        (
+            [Role] => student
+            [matricule] => 2222
+            [nom] => besis
+            [prenom] => houcine
+            [level] => asistant b
+            [binome_id] => 5
+            [Password] => besis
+            [niveau] => asistant b
+        )
+
+    [2] => Array
+        (
+            [Role] => student
+            [matricule] => 3333
+            [nom] => anis
+            [prenom] => chbab
+            [level] => prof de cour
+            [binome_id] => 2
+            [Password] => anis
+            [niveau] => prof de cour
+        )
+
+    [3] => Array
+        (
+            [Role] => student
+            [matricule] => 4444
+            [nom] => alhaq
+            [prenom] => diaa
+            [level] => prof de td
+            [binome_id] => 2
+            [Password] => diaa
+            [niveau] => prof de td
+        )
+
+)
+
+Successfully added student: 1111
+Successfully added student: 2222
+Successfully added student: 3333
+Successfully added student: 4444
+Received data: Array
+(
+    [0] => Array
+        (
+            [Role] => student
+            [matricule] => 1111
+            [nom] => abdallah
+            [prenom] => delhoum
+            [level] => assistant a
+            [binome_id] => 5
+            [Password] => abdallah
+            [niveau] => assistant a
+        )
+
+    [1] => Array
+        (
+            [Role] => student
+            [matricule] => 2222
+            [nom] => besis
+            [prenom] => houcine
+            [level] => asistant b
+            [binome_id] => 5
+            [Password] => besis
+            [niveau] => asistant b
+        )
+
+    [2] => Array
+        (
+            [Role] => student
+            [matricule] => 3333
+            [nom] => anis
+            [prenom] => chbab
+            [level] => prof de cour
+            [binome_id] => 2
+            [Password] => anis
+            [niveau] => prof de cour
+        )
+
+    [3] => Array
+        (
+            [Role] => student
+            [matricule] => 4444
+            [nom] => alhaq
+            [prenom] => diaa
+            [level] => prof de td
+            [binome_id] => 2
+            [Password] => diaa
+            [niveau] => prof de td
+        )
+
+)
+
+Successfully added student: 1111
+Successfully added student: 2222
+Successfully added student: 3333
+Successfully added student: 4444
