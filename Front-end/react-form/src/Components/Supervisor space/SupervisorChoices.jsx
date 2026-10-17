@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, X, User, Users, FileText } from 'lucide-react';
 import SupervisorHeader from './SupervisorHeader';
-import SupervisorSideBar from './supervisorSideBar';
+import SupervisorSideBar from './SupervisorSideBar';
 
 export default function ProjectRequests() {
   const [projectRequests, setProjectRequests] = useState([]);
