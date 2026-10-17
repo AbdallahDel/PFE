@@ -19,7 +19,7 @@ export default function MesChoix() {
     setError(null);
     
     try {
-      const response = await fetch('http://localhost:8000/getStudentChoices.php', {
+      const response = await fetch('http://localhost/PFE/Back-end/getStudentChoices.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -58,7 +58,7 @@ const fetchThemeDetails = async (projectIds) => {
   try {
     console.log("Fetching details for projects:", projectIds);
     
-    const response = await fetch('http://localhost:8000/getProjectDetails.php', {
+    const response = await fetch('http://localhost/PFE/Back-end/getProjectDetails.php', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -118,7 +118,7 @@ const fetchThemeDetails = async (projectIds) => {
   // Handle file view
   const handleViewFile = (filePath) => {
     if (filePath && filePath.toLowerCase() !== 'null') {
-      window.open(`http://localhost:8000/${filePath}`, '_blank');
+      window.open(`http://localhost/PFE/Back-end/${filePath}`, '_blank');
     } else {
       alert('Aucun fichier disponible pour ce thème.');
     }
@@ -131,7 +131,7 @@ const fetchThemeDetails = async (projectIds) => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/confirmProjectChoices.php', {
+      const response = await fetch('http://localhost/PFE/Back-end/confirmProjectChoices.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ const fetchThemeDetails = async (projectIds) => {
     }
     
     try {
-      const response = await fetch('http://localhost:8000/cancelThemeChoices.php', {
+      const response = await fetch('http://localhost/PFE/Back-end/cancelThemeChoices.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

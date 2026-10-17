@@ -10,7 +10,7 @@ export default function Header() {
     const confirmed = window.confirm("Are you sure you want to Logout");
     if (!confirmed) return;
 
-    const response = await  fetch ('http://localhost:8000/logOut.php',{
+    const response = await  fetch ('http://localhost/PFE/Back-end/logOut.php',{
       method: 'POST',
       credentials: 'include',
     });

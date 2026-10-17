@@ -1,6 +1,6 @@
 <?php
 // Database connection for Docker environment
-$servername = "db";  // Use Docker service name
+$servername = "localhost";  // Use Docker service name
 $username = "root";
 $password = "";      // Empty password
 $dbname = "testform";

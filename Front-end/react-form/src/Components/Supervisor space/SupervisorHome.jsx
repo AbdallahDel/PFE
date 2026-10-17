@@ -14,7 +14,7 @@ export default function SupervisorDashboard() {
 
   const fetchSupervisorData = async () => {
     try {
-      const response = await fetch('http://localhost:8000/supervisorProfile.php', {
+      const response = await fetch('http://localhost/PFE/Back-end/supervisorProfile.php', {
         method: 'GET',
         credentials: 'include',
       });
