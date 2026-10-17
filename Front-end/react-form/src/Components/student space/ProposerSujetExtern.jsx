@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Save, Upload, Plus, FileText, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 import StudentHeader from '../student space/StudentHeader';
-import StudentSidebar from '../student space/StudentSidebar';
+import StudentSidebar from '../student space/StudentSideBar';
 
 const ProposerSujetExtern = ({ onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
