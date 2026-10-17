@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User } from 'lucide-react';
 import SupervisorHeader from './SupervisorHeader';
-import SupervisorSideBar from './supervisorSideBar';
+import SupervisorSideBar from './SupervisorSideBar';
 
 export default function SupervisorDashboard() {
   const [supervisorData, setSupervisorData] = useState(null);
