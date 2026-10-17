@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import SupervisorHeader from './SupervisorHeader';
-import SupervisorSidebar from './SupervisorSidebar';
+import SupervisorSidebar from './SupervisorSideBar';
 
 export default function SupervisorPasswordChange() {
   const [oldPassword, setOldPassword] = useState('');
