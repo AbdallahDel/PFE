@@ -13,8 +13,12 @@ RUN chown -R www-data:www-data /var/www/html
 
 # Run cors.php before every PHP script
 RUN echo "auto_prepend_file=/var/www/html/cors.php" > /usr/local/etc/php/conf.d/zz-cors.ini
-
+# Start script (strip Windows line endings, keep it out of the web root)
+COPY start.sh /usr/local/bin/start.sh
+RUN sed -i 's/\r$//' /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh \
+    && rm -f /var/www/html/start.sh
+    
 EXPOSE 80
 
 # Re-apply the MPM fix at startup, then follow Railway's PORT
-CMD ["sh", "-c", "rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* && sed -i \"s/80/${PORT:-80}/g\" /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
+CMD ["/usr/local/bin/start.sh"]
