@@ -1,11 +1,9 @@
 <?php
-include 'connexion.php'; // or require 'connection.php';
-
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Credentials: true");
+require_once __DIR__ . '/cors.php';
 header("Content-Type: application/json");
 
-session_start();  // Move this to the top
+session_start();
+include 'connexion.php';
 
 
 //get Post data
