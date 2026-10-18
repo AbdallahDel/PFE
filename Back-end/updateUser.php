@@ -8,10 +8,6 @@ error_reporting(0);
 include 'connexion.php';
 
 // Set headers first, before any potential output
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: PUT, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Accept");
 header("Content-Type: application/json");
 
 // Handle preflight OPTIONS request

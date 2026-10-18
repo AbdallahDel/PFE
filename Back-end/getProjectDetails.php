@@ -1,11 +1,6 @@
 <?php
 // Include the connection file
 include 'connexion.php';
-
-header("Access-Control-Allow-Origin:http://localhost:3000"); // Change this to be more specific in production
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
 // For preflight requests

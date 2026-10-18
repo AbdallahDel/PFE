@@ -2,10 +2,6 @@
 include 'connexion.php';
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET');
-header('Access-Control-Allow-Headers: Content-Type');
-
 try {
     // Use $conn (MySQLi) instead of undefined $pdo
     $stmt = $conn->prepare("SELECT COUNT(*) AS total_users FROM user");

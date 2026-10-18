@@ -11,6 +11,9 @@ RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.c
 COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html
 
+# Run cors.php before every PHP script
+RUN echo "auto_prepend_file=/var/www/html/cors.php" > /usr/local/etc/php/conf.d/zz-cors.ini
+
 EXPOSE 80
 
 # Re-apply the MPM fix at startup, then follow Railway's PORT

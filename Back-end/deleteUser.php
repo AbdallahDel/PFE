@@ -1,10 +1,5 @@
 <?php
 include 'connexion.php'; // or require 'connection.php';
-
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Accept");
 header("Content-Type: application/json");
 
 // Handle preflight OPTIONS request

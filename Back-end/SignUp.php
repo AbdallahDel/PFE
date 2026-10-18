@@ -1,8 +1,5 @@
 <?php
 include 'connexion.php'; // or require 'connection.php';
-
-
-header("Access-Control-Allow-Origin: *");
 header('Content-Type: application/json');
 
 // Enable error reporting but log to file instead of output
