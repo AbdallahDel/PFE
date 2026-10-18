@@ -16,7 +16,7 @@ export default function AdminProfile() {
   useEffect(() => {
     const getAdminInfo = async () => {
       try {
-        const response = await fetch('http://localhost/PFE/Back-end/GetAdminInfo.php', {
+        const response = await fetch('https://pfe-production-f6be.up.railway.app/GetAdminInfo.php', {
           credentials: 'include',
           headers: {
             'Accept': 'application/json'
@@ -66,7 +66,7 @@ export default function AdminProfile() {
       formData.append('oldPassword', oldPassword);
       formData.append('newPassword', newPassword);
       
-      const response = await fetch('http://localhost/PFE/Back-end/ChangePassword.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/ChangePassword.php', {
         method: 'POST',
         credentials: 'include',
         body: formData

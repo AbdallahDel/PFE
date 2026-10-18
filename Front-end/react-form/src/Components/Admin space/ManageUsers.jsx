@@ -10,7 +10,7 @@ import AddUser from './AddUser';
 
 const ManageUsers = (formData) => {
   // Sample user data - replace with your actual data source
-  const API_BASE_URL = 'http://localhost/PFE/Back-end';
+  const API_BASE_URL = 'https://pfe-production-f6be.up.railway.app';
 
   const [users, setUsers] = useState([]); 
   const [Editing, setEditing] = useState(false);

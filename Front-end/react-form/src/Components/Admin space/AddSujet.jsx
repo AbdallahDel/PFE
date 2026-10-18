@@ -23,7 +23,7 @@ const AddSujet = ({ onAddSujet, onClose }) => {
     const fetchSupervisors = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost/PFE/Back-end/getAvailableSupervisors.php', {
+        const response = await fetch('https://pfe-production-f6be.up.railway.app/getAvailableSupervisors.php', {
           credentials: 'include',
           headers: {
             'Accept': 'application/json'
@@ -109,7 +109,7 @@ const AddSujet = ({ onAddSujet, onClose }) => {
       }
       
       // Direct fetch instead of using onAddSujet
-      const response = await fetch('http://localhost/PFE/Back-end/addSujet.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/addSujet.php', {
         method: 'POST',
         credentials: 'include',
         body: submitData, // Send FormData directly - don't set Content-Type header

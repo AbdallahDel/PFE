@@ -14,7 +14,7 @@ export default function SupervisorDashboard() {
 
   const fetchSupervisorData = async () => {
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/supervisorProfile.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/supervisorProfile.php', {
         method: 'GET',
         credentials: 'include',
       });

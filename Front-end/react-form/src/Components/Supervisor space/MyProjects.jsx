@@ -16,7 +16,7 @@ export default function MyProjects() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getSupervisorAsignedProjects.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/getSupervisorAsignedProjects.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -39,7 +39,7 @@ export default function MyProjects() {
 
   const handleDownloadFile = (filePath) => {
     if (filePath) {
-      window.open(`http://localhost/PFE/Back-end/${filePath}`, '_blank');
+      window.open(`https://pfe-production-f6be.up.railway.app/${filePath}`, '_blank');
     } else {
       alert('Aucun fichier disponible pour ce projet.');
     }

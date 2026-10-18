@@ -11,7 +11,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTotalUsers = async () => {
       try {
-        const response = await fetch('http://localhost/PFE/Back-end/totaleUsers.php', {
+        const response = await fetch('https://pfe-production-f6be.up.railway.app/totaleUsers.php', {
           method: 'GET',
           headers: {
             'Accept': 'application/json'

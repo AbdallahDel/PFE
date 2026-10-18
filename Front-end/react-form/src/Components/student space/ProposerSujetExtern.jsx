@@ -108,7 +108,7 @@ const ProposerSujetExtern = ({ onClose, onSuccess }) => {
         formDataObj.append('pdfFile', file);
       }
 
-      const response = await fetch('http://localhost/PFE/Back-end/proposerSujetExtern.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/proposerSujetExtern.php', {
         method: 'POST',
         credentials: 'include',
         body: formDataObj

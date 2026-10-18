@@ -7,7 +7,7 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showInfo, setShowInfo] = useState(false);
-  const API_BASE_URL = 'http://localhost';
+  const API_BASE_URL = 'https://pfe-production-f6be.up.railway.app';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ function LoginForm() {
     formData.append('Password', password);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/PFE/Back-end/backEnd.php`, {
+      const response = await fetch(`${API_BASE_URL}/backEnd.php`, {
         method: 'POST',
         credentials: 'include',
         body: formData,

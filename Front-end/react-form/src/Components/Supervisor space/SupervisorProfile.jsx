@@ -16,7 +16,7 @@ export default function SupervisorProfile() {
     try {
       // Add a cache buster to prevent caching issues
       const cacheBuster = new Date().getTime();
-      const response = await fetch(`http://localhost/PFE/Back-end/supervisorProfile.php?cb=${cacheBuster}`, {
+      const response = await fetch(`https://pfe-production-f6be.up.railway.app/supervisorProfile.php?cb=${cacheBuster}`, {
         method: 'GET',
         credentials: 'include',
       });

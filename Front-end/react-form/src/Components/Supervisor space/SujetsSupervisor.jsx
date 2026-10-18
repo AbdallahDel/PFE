@@ -27,7 +27,7 @@ export default function SupervisorSubjects() {
     setError(null);
     
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getSuperviserSubjects.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/getSuperviserSubjects.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -57,7 +57,7 @@ export default function SupervisorSubjects() {
     setErrorAll(null);
     
     try {
-      const response = await fetch('http://localhost/PFE/Back-end/getSujetsInfo.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/getSujetsInfo.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -106,7 +106,7 @@ export default function SupervisorSubjects() {
   // Function to handle file download
   const handleViewFile = (filePath) => {
     // Assuming file path is relative to backend
-    window.open(`http://localhost/PFE/Back-end/${filePath}`, '_blank');
+    window.open(`https://pfe-production-f6be.up.railway.app/${filePath}`, '_blank');
   };
 
   return (
