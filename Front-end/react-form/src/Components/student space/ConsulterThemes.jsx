@@ -63,7 +63,7 @@ export default function ConsulterThemes() {
   // Fetch user's submitted choices
   const fetchUserChoices = async () => {
     try {
-      const response = await fetch('https://pfe-production-f6be.up.railway.app/getUserChoices.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/getStudentChoices.php', {
         method: 'GET',
         credentials: 'include'
       });

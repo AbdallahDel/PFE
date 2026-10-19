@@ -109,7 +109,7 @@ const AddSujet = ({ onAddSujet, onClose }) => {
       }
       
       // Direct fetch instead of using onAddSujet
-      const response = await fetch('https://pfe-production-f6be.up.railway.app/addSujet.php', {
+      const response = await fetch('https://pfe-production-f6be.up.railway.app/AddSujet.php', {
         method: 'POST',
         credentials: 'include',
         body: submitData, // Send FormData directly - don't set Content-Type header
