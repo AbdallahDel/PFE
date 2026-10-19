@@ -32,7 +32,7 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LoginForm />} />
-        <Route path="/SignUp" element={<SignUp />} />
+        
         
         {/* Student routes */}
         <Route path="/Home" element={
