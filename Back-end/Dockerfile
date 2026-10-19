@@ -20,5 +20,9 @@ RUN sed -i 's/\r$//' /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
     
 EXPOSE 80
 
+RUN mkdir -p /var/www/html/uploads/subjects \
+    && chown -R www-data:www-data /var/www/html/uploads \
+    && chmod -R 775 /var/www/html/uploads
+
 # Re-apply the MPM fix at startup, then follow Railway's PORT
 CMD ["/usr/local/bin/start.sh"]

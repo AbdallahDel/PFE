@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 0);
+   ini_set('log_errors', 1);
 // Include the connection file
 include 'connexion.php';
 
@@ -100,8 +102,7 @@ try {
         }
         
         // Create upload directory if it doesn't exist
-        $uploadDir = '../Back-end/uploads/subjects/';
-        if (!file_exists($uploadDir)) {
+        $uploadDir = __DIR__ . '/uploads/subjects/';        if (!file_exists($uploadDir)) {
             if (!mkdir($uploadDir, 0755, true)) {
                 throw new Exception("Failed to create upload directory");
             }
@@ -117,8 +118,7 @@ try {
         }
         
         // Set the file path to be stored in the database
-        $file_path = '../Back-end/uploads/subjects/' . $fileName;
-    }
+         $file_path = 'uploads/subjects/' . $fileName;    }
     
     // Insert new project with file path and type
     $query = "INSERT INTO projects (title, niveau, description, contenu, environnement, mots_cles, supervisor_id, file_path, Etat, type, created_at)
