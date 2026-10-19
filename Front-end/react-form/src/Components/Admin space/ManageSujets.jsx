@@ -77,7 +77,7 @@ const ManageSujets = () => {
     const confirmed = window.confirm("Are you sure you want to delete this subject?");
     if (!confirmed) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/deleteSujet.php`, {
+      const response = await fetch(`${API_BASE_URL}/DeleteSujet.php`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
